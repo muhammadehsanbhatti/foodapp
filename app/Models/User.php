@@ -85,10 +85,16 @@ class User extends Authenticatable
     //     return $status;
     // }
 
+  
+    public function busines()
+    {
+        return $this->hasOne(Business::class, 'user_id');
+    }
     
     public static function getUser($posted_data = array())
     {
         $query = User::latest()
+                ->with('busines')
         ;
         
         // if (!isset($posted_data['comma_separated_ids'])) {
@@ -140,6 +146,9 @@ class User extends Authenticatable
 	  
         if (isset($posted_data['phone_number'])) {
             $query = $query->where('users.phone_number', $posted_data['phone_number']);
+        }
+        if (isset($posted_data['user_login_status'])) {
+            $query = $query->where('users.user_login_status', $posted_data['user_login_status']);
         }
         if (isset($posted_data['user_status'])) {
             $query = $query->where('users.user_status', $posted_data['user_status']);
@@ -230,7 +239,9 @@ class User extends Authenticatable
         if (isset($posted_data['password'])) {
             $data->password = Hash::make($posted_data['password']);
         }
-        
+        if (isset($posted_data['user_login_status'])) {
+            $data->user_login_status = $posted_data['user_login_status'];
+        }
         if (isset($posted_data['user_status'])) {
             $data->user_status = $posted_data['user_status'];
         }

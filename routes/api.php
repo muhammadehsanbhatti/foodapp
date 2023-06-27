@@ -33,6 +33,7 @@ Route::get('verify-email/{token?}', [RegisterController::class, 'verifyUserEmail
 
 
 Route::middleware('auth:api')->group( function () {
-    
-   	Route::resource('restaurant', RestaurantController::class);
+	
+	   Route::post('restaurant/{id}', [RestaurantController::class, 'update']); 
+	   Route::resource('restaurant', RestaurantController::class);
 });

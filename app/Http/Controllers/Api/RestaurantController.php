@@ -17,6 +17,10 @@ class RestaurantController extends Controller
 
         $posted_data = array();
         $request_data = $request->all();
+        // $posted_data['user_id'] = \Auth::user()->id;
+        if (isset($request_data['business_name'])) {
+            $posted_data['business_name'] = $request_data['business_name'];
+        }
         $posted_data['paginate'] = 10;
         if($request_data){
             $posted_data = array_merge($posted_data,$request_data);
@@ -56,7 +60,7 @@ class RestaurantController extends Controller
             'stock'    => 'required',
             'category'    => 'required',
             'category_type'    => 'required',
-            'restaurant_file'    => 'required',
+            'restaurant_file'    => 'required|mimes:jpeg,png,jpg|',
         ]);
    
         if($validator->fails()){
@@ -129,7 +133,42 @@ class RestaurantController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $requested_data = array();
+        $requested_data = $request->all();
+        $requested_data['update_id'] = $id;
+        
+        $rules = array(
+            
+            'business_name' => 'required|unique:businesses,business_name,'.$request->id,
+            'restaurant_address' => 'required',
+            'business_image' => 'required|mimes:jpeg,png,jpg',
+            'business_description' => 'required',
+            'starting_price' => 'required',
+            'ordr_delivery_time' => 'required',
+            'business_type' => 'required',
+            'cuisine_type' => 'required',
+        );
+       
+        $validator = \Validator::make($requested_data, $rules);
+
+        if ($validator->fails()) {
+            return $this->sendError($validator->errors()->first(), ["error" => $validator->errors()->first()]);
+        }
+
+        if($request->file('business_image')) {
+          
+            $extension = $request->business_image->getClientOriginalExtension();
+            $file_name = time() . '_' . $request->business_image->getClientOriginalName();
+            $filePath = $request->business_image->storeAs('business_image', $file_name, 'public');
+            $filePath = 'storage/business_image/' . $file_name;
+            $requested_data['business_image'] = $filePath;
+        }
+
+        $data = $this->BusinessObj->saveUpdateBusiness($requested_data);
+
+
+        
+        return $this->sendResponse($data, 'Restaurante Updated successfully');
     }
 
     /**

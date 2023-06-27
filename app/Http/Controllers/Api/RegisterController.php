@@ -357,19 +357,31 @@ class RegisterController extends BaseController
             'phone_number'  => 'required|unique:users,phone_number',
             'email' => 'required|email:rfc,dns|unique:users,email',
             'business_name' => 'required|unique:businesses,business_name',
+            'user_login_status' => 'required|in:admin,customer',
             'business_type' => 'required',
             'restaurant_address' => 'required',
             'cuisine_type' => 'required',
             'password' => 'required|min:6',
             'confirm_password' => 'required|required_with:password|same:password'
         );
+        if ($requested_data['user_login_status'] == 'customer') {
+            $rules = array(
+                   
+                'first_name' => 'required||regex:/^[a-zA-Z ]+$/u',
+                'last_name' => 'required||regex:/^[a-zA-Z ]+$/u',
+                'phone_number'  => 'required|unique:users,phone_number',
+                'email' => 'required|email:rfc,dns|unique:users,email',
+                'password' => 'required|min:6',
+                'confirm_password' => 'required|required_with:password|same:password'
+            );
+        }
         $validator = \Validator::make($requested_data, $rules);
         if ($validator->fails()) {
             return $this->sendError($validator->errors()->first(), $validator->messages());
         } 
 
         $data = $this->UserObj->saveUpdateUser($requested_data);
-        if (isset($data)) {
+        if (isset($data) && $data['user_login_status'] == 'admin') {
         $this->BusinessObj->saveUpdateBusiness([
             'user_id' => $data->id,
             'business_name' => $requested_data['business_name'],

@@ -21,6 +21,7 @@ class CreateUsersTable extends Migration
             $table->string('phone_number')->unique();
           
             $table->string('password')->nullable();
+            $table->enum('user_login_status', ['super-admin', 'admin', 'customer'])->default('customer');
         
             $table->enum('user_status', ['Active', 'Block'])->default('Active');
             $table->enum('register_from', ['Web', 'Facebook', 'Gmail', 'Apple'])->default('Web');

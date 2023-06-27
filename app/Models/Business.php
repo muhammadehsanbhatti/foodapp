@@ -10,11 +10,13 @@ class Business extends Model
 {
     use HasFactory;
     use SoftDeletes;
-  
-      
+
+    
     public static function getBusiness($posted_data = array())
     {
-        $query = Business::latest();
+        $query = Business::latest()
+                    ->with('user')
+        ;
         if (isset($posted_data['id'])) {
             $query = $query->where('businesses.id', $posted_data['id']);
         }
@@ -32,6 +34,18 @@ class Business extends Model
         }
         if (isset($posted_data['cuisine_type'])) {
             $query = $query->where('businesses.cuisine_type', $posted_data['cuisine_type']);
+        }
+        if (isset($posted_data['business_image'])) {
+            $query = $query->where('businesses.business_image', $posted_data['business_image']);
+        }
+        if (isset($posted_data['business_description'])) {
+            $query = $query->where('businesses.business_description', $posted_data['business_description']);
+        }
+        if (isset($posted_data['starting_price'])) {
+            $query = $query->where('businesses.starting_price', $posted_data['starting_price']);
+        }
+        if (isset($posted_data['ordr_delivery_time'])) {
+            $query = $query->where('businesses.ordr_delivery_time', $posted_data['ordr_delivery_time']);
         }
 
         $query->select('businesses.*');
@@ -88,6 +102,18 @@ class Business extends Model
         }
         if (isset($posted_data['cuisine_type'])) {
             $data->cuisine_type = $posted_data['cuisine_type'];
+        }
+        if (isset($posted_data['business_image'])) {
+            $data->business_image = $posted_data['business_image'];
+        }
+        if (isset($posted_data['business_description'])) {
+            $data->business_description = $posted_data['business_description'];
+        }
+        if (isset($posted_data['starting_price'])) {
+            $data->starting_price = $posted_data['starting_price'];
+        }
+        if (isset($posted_data['ordr_delivery_time'])) {
+            $data->ordr_delivery_time = $posted_data['ordr_delivery_time'];
         }
 
         $data->save();

@@ -20,7 +20,7 @@ use Illuminate\Support\Facades\Artisan;
 | contains the "web" middleware group. Now create something great!
 |
 */
-/waqas test
+//waqas test
 Route::get('/clear-cache', function() {
     // Artisan::call('optimize');
     Artisan::call('cache:clear');

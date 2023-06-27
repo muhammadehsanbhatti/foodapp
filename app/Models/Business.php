@@ -15,7 +15,6 @@ class Business extends Model
     public static function getBusiness($posted_data = array())
     {
         $query = Business::latest()
-                    ->with('user')
         ;
         if (isset($posted_data['id'])) {
             $query = $query->where('businesses.id', $posted_data['id']);

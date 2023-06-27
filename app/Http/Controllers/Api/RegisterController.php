@@ -334,7 +334,6 @@ class RegisterController extends BaseController
         }
     }
 
-
     /**
      * Register api
      *

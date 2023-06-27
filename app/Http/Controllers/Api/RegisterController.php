@@ -18,7 +18,7 @@ use Carbon\Carbon;
 class RegisterController extends BaseController
 {
 
-
+//Test User
 //     // List of general titles 
 //     public function general_titles(Request $request){
 

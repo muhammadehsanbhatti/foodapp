@@ -379,7 +379,6 @@ class RegisterController extends BaseController
         ]);
         }
       
-      
         // $user = $this->UserObj->getUser([
         //     'email' => $user['email'],
         //     'detail' => true

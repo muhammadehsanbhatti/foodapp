@@ -1,0 +1,176 @@
+/*================================================================================
+	Item Name: Vuexy - Vuejs, HTML & Laravel Admin Dashboard Template
+	Version: 2.0
+	Author: PIXINVENT
+	Author URL: http://www.themeforest.net/user/pixinvent
+================================================================================
+
+NOTE:
+------
+PLACE HERE YOUR OWN SCSS CODES AND IF NEEDED, OVERRIDE THE STYLES FROM THE OTHER STYLESHEETS.
+WE WILL RELEASE FUTURE UPDATES SO IN ORDER TO NOT OVERWRITE YOUR STYLES IT'S BETTER LIKE THIS.  */
+
+
+.pagination {
+	padding-left: 15px;
+}
+
+.table-responsive {
+	background: white;
+}
+
+.alert {
+	padding: 15px;
+}
+
+.alert-success2 {
+	background: rgba(40, 199, 111, 0.12) !important;
+	color: #28c76f !important;
+}
+
+.alert-danger2 {
+	background: rgba(234, 84, 85, 0.12) !important;
+	color: #ea5455 !important;
+}
+
+.alert-info2 {
+	background: rgba(0, 207, 232, 0.12) !important;
+	color: #00cfe8 !important;
+}
+
+.icon_image {
+	margin-left: 4%;
+}
+
+.preview {
+	/* background: lightgray; */
+	display: none;
+	border-radius: 10px;
+	margin: 10px 0px;
+	padding: 15px;
+	border: 1px solid lightgray;
+	box-shadow: 0 4px 24px 0 rgba(34, 41, 47, 0.25);
+}
+
+.preview img {
+	border-radius: 50%;
+	height: 60px;
+	width: 60px;
+	margin: 5px;
+	border: 2px solid #44b6c0c4;
+}
+
+.display_images img {
+	border-radius: 50%;
+	height: 25px;
+	width: 25px;
+	margin: 5px;
+	border: 2px solid #44b6c0c4;
+}
+
+.display_images_list img {
+	border-radius: 50%;
+	height: 50px;
+	width: 50px;
+	margin: 5px;
+	border: 2px solid #44b6c0c4;
+}
+
+.basic-addon {
+	padding: 0 !important;
+	margin: 0 !important;
+}
+
+.show_role_name_td {
+	padding: 10px;
+	background: #f3f2f7;
+	border: 1px solid lightgray;
+	border-radius: 10px;
+}
+
+.tp_loader {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	font-size: 70px;
+	color: white;
+	transform: translate(-50%, -50%);
+}
+
+.loaderOverlay {
+	position: fixed;
+	display: none;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: rgba(0, 0, 0, 0.5);
+	z-index: 9999;
+	cursor: pointer;
+}
+
+.avatar-color {
+	white-space: nowrap;
+	border-radius: 50%;
+	position: relative;
+	cursor: pointer;
+	color: #FFFFFF;
+	display: inline-flex;
+	font-size: 1rem;
+	text-align: center;
+	vertical-align: middle;
+	font-weight: 600;
+}
+
+.avatar-color [class*='avatar-status-'] {
+	border-radius: 50%;
+	width: 11px;
+	height: 11px;
+	position: absolute;
+	right: 12px;
+	bottom: 8px;
+	border: 1px solid #FFFFFF;
+}
+
+.avatar-color .avatar-status-online {
+	background-color: #28C76F;
+}
+
+.avatar-color .avatar-status-offline {
+	background-color: #ea5455;
+}
+
+html .pace .pace-progress {
+	/* background: #f5f5f5; */
+	background: transparent;
+}
+
+.dark-layout .table-responsive {
+	background: transparent;
+}
+
+.dark-layout .main-menu.menu-light .navigation>li.open:not(.menu-item-closing)>a,
+.dark-layout .main-menu.menu-light .navigation>li.sidebar-group-active>a {
+	background-color: #161d31 !important;
+}
+
+.role-badge{
+	color: white;
+	background-color: red;
+	padding: 7px;
+	border-radius: 20px;
+	font-size: 12px;
+	font-weight: bolder;
+	min-width: 80px;
+	display: inline-block;
+	text-align: center;
+	text-transform: uppercase;
+}
+
+.menu_img_icons {
+	width: 20px;
+	height: 20px;
+	margin-right: 15px;
+}

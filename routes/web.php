@@ -31,6 +31,9 @@ Route::get('/clear-cache', function() {
     return '<h1>Cache facade value cleared</h1>';
 })->name('clear-cache');
 
+Route::get('/linkstorage', function () {
+    Artisan::call('storage:link');
+});
 // Route::get('/schedule-run', function() {
 //     Artisan::call("schedule:run");
 //     return '<h1>schedule run activated</h1>';

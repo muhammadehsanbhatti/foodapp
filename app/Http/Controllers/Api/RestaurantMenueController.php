@@ -62,7 +62,7 @@ class RestaurantMenueController extends Controller
                     $extension = $image->getClientOriginalExtension();
                     $file_name = time() . '_' . $image->getClientOriginalName();
                     $filePath = $image->storeAs('restaurant_file', $file_name, 'public');
-                    $filePath = 'storage/restaurant_menue_file/' . $file_name;
+                    $filePath = 'storage/restaurant_file/' . $file_name;
                     $response = $this->RestaurantFileObj->saveUpdateRestaurantFile([
                         'restaurnat_menu_id' => $restaurant_menue->id,
                         'restaurant_file' => $filePath,
@@ -107,7 +107,70 @@ class RestaurantMenueController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $requested_data = array();
+        $requested_data = $request->all();
+        $base_url = public_path();
+        $requested_data['update_id'] = $id;
+        
+        $rules = array(
+            
+            'restaurant_id'    => 'required|exists:businesses,id',
+            'item_name'        => 'required||regex:/^[a-zA-Z ]+$/u',
+            'description'      => 'required||regex:/^[a-zA-Z0-9 ]+$/u',
+            'regular_price'    => 'required',
+            'sale_price'       => 'required|',
+            'stock'            => 'required',
+            'category'         => 'required',
+            'category_type'    => 'required',
+            'restaurant_file'  => 'required',
+        );
+       
+        $validator = \Validator::make($requested_data, $rules);
+
+        if ($validator->fails()) {
+            return $this->sendError($validator->errors()->first(), ["error" => $validator->errors()->first()]);
+        }
+
+        $restaurant_menue = $this->RestaurantMenueObj->saveUpdateRestaurantMenue($requested_data);
+        // echo '<pre>'; print_r($restaurant_menue); echo '</pre>'; exit;
+
+        if (isset($restaurant_menue->id)){
+            if($request->file('restaurant_file')) {
+
+                $restaurant_menue_file = $this->RestaurantFileObj->getRestaurantFile([
+                    'restaurnat_menu_id' => $restaurant_menue->id,
+                ])->ToArray();
+                $data = array_column($restaurant_menue_file,'restaurant_file');
+              
+            foreach ($requested_data['restaurant_file'] as $restaurant_file_key =>$image) {
+
+                if (!empty($data)) {
+                    $url = public_path().'/'.$data[$restaurant_file_key];
+                    // echo '<pre>'; print_r($url); echo '</pre>'; exit;
+                    if (file_exists($url)) {
+                        // echo '<pre>'; print_r($url); echo '</pre>'; exit;
+                        unlink($url);
+                    }
+                }
+
+                $extension = $image->getClientOriginalExtension();
+                $file_name = time() . '_' . $image->getClientOriginalName();
+                $filePath = $image->storeAs('restaurant_file', $file_name, 'public');
+                $filePath = 'storage/restaurant_file/' . $file_name;
+                $response = $this->RestaurantFileObj->saveUpdateRestaurantFile([
+                    'restaurnat_menu_id' => $restaurant_menue->id,
+                    'restaurant_file' => $filePath,
+                ]);
+                $return_data[] = $response;
+            }
+            // return $this->sendResponse($restaurant_menue, 'Restaurant menue added successfully.');
+        }
+        }else{
+            $error_message['error'] = 'Somthing went wrong';  
+        }
+
+        // $data = $this->BusinessObj->saveUpdateBusiness($requested_data);
+        return $this->sendResponse($restaurant_menue, 'Restaurante Updated successfully');
     }
 
     /**

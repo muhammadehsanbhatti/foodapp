@@ -5,6 +5,7 @@ use App\Http\Controllers\Api\MessageController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\Api\RegisterController;
+use App\Http\Controllers\Api\RestaurantMenueController;
 use App\Http\Controllers\Api\RestaurantController;
 
 /*
@@ -36,4 +37,6 @@ Route::middleware('auth:api')->group( function () {
 	
 	   Route::post('restaurant/{id}', [RestaurantController::class, 'update']); 
 	   Route::resource('restaurant', RestaurantController::class);
+
+	   Route::resource('restaurant_menue', RestaurantMenueController::class);
 });

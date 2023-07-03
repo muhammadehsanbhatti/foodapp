@@ -14,10 +14,8 @@ class RestaurantController extends Controller
      */
     public function index(Request $request)
     {
-    echo '<pre>'; print_r("dfsdfs"); echo '</pre>'; exit;
         $posted_data = array();
         $request_data = $request->all();
-        echo '<pre>'; print_r($posted_data); echo '</pre>'; exit;
         // $posted_data['user_id'] = \Auth::user()->id;
         if (isset($request_data['business_name'])) {
             $posted_data['business_name'] = $request_data['business_name'];

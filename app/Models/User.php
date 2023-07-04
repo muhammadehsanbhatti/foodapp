@@ -153,6 +153,9 @@ class User extends Authenticatable
         if (isset($posted_data['user_status'])) {
             $query = $query->where('users.user_status', $posted_data['user_status']);
         }
+        if (isset($posted_data['profile_image'])) {
+            $query = $query->where('users.profile_image', $posted_data['profile_image']);
+        }
         if (isset($posted_data['last_seen'])) {
             $query = $query->where('users.last_seen', $posted_data['last_seen']);
         }
@@ -244,6 +247,9 @@ class User extends Authenticatable
         }
         if (isset($posted_data['user_status'])) {
             $data->user_status = $posted_data['user_status'];
+        }
+        if (isset($posted_data['profile_image'])) {
+            $data->profile_image = $posted_data['profile_image'];
         }
         if (isset($posted_data['register_from'])) {
             $data->register_from = $posted_data['register_from'];

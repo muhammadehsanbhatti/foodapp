@@ -380,6 +380,28 @@ class RegisterController extends BaseController
             return $this->sendError($validator->errors()->first(), $validator->messages());
         } 
 
+        if ($request->file('profile_image')) {
+            $extension = $request->profile_image->getClientOriginalExtension();
+            if ($extension == 'jpg' || $extension == 'jpeg' || $extension == 'png') {
+
+                // if (!empty(\Auth::user()->profile_image) && \Auth::user()->role != 1) {
+                //     $url = $base_url.'/'.\Auth::user()->profile_image;
+                //     if (file_exists($url)) {
+                //         unlink($url);
+                //     }
+                // }
+
+                // $file_name = time().'_'.$request->profile_image->getClientOriginalName();
+                $file_name = time() . '_' . rand(1000000, 9999999) . '.' . $extension;
+
+                $filePath = $request->file('profile_image')->storeAs('profile_image', $file_name, 'public');
+                $requested_data['profile_image'] = 'storage/profile_image/' . $file_name;
+            } else {
+                $error_message['error'] = 'Profile Image Only allowled jpg, jpeg or png image format.';
+                return $this->sendError($error_message['error'], $error_message);
+            }
+        }
+
         $data = $this->UserObj->saveUpdateUser($requested_data);
         if (isset($data) && $data['user_login_status'] == 'admin') {
         $this->BusinessObj->saveUpdateBusiness([
@@ -399,6 +421,52 @@ class RegisterController extends BaseController
         // $user['token'] =  $user->createToken('MyApp')->accessToken;
        
         return $this->sendResponse($data, 'User information added successfully.');
+        
+    }
+
+    public function edit_profile(Request $request){
+        $requested_data = $request->all();
+        $requested_data['update_id'] = \Auth::user()->id;
+
+        $rules = array(
+                   
+            'first_name' => 'required||regex:/^[a-zA-Z ]+$/u',
+            'last_name' => 'required||regex:/^[a-zA-Z ]+$/u',
+            'phone_number'  => 'required|unique:users,phone_number,'.\Auth::user()->id,
+            'email' => 'required|email:rfc,dns|unique:users,email,'.\Auth::user()->id,
+        );
+        
+        $validator = \Validator::make($requested_data, $rules);
+        if ($validator->fails()) {
+            return $this->sendError($validator->errors()->first(), $validator->messages());
+        } 
+
+        if ($request->file('profile_image')) {
+            $extension = $request->profile_image->getClientOriginalExtension();
+            if ($extension == 'jpg' || $extension == 'jpeg' || $extension == 'png') {
+
+                if (!empty(\Auth::user()->profile_image)) {
+                    
+                    $base_url = public_path();
+                    $url = $base_url.'/'.\Auth::user()->profile_image;
+                    if (file_exists($url)) {
+                        unlink($url);
+                    }
+                }
+
+                // $file_name = time().'_'.$request->profile_image->getClientOriginalName();
+                $file_name = time() . '_' . rand(1000000, 9999999) . '.' . $extension;
+
+                $filePath = $request->file('profile_image')->storeAs('profile_image', $file_name, 'public');
+                $requested_data['profile_image'] = 'storage/profile_image/' . $file_name;
+            } else {
+                $error_message['error'] = 'Profile Image Only allowled jpg, jpeg or png image format.';
+                return $this->sendError($error_message['error'], $error_message);
+            }
+        }
+
+        $data = $this->UserObj->saveUpdateUser($requested_data);
+        return $this->sendResponse($data, 'User information updated successfully.');
         
     }
 
@@ -1182,11 +1250,11 @@ class RegisterController extends BaseController
             // 'new_password'      => 'required|min:4',
             'new_password'      => [
                 'required', Password::min(8)
-                    ->letters()
-                    ->mixedCase()
-                    ->numbers()
-                    ->symbols()
-                    ->uncompromised()
+                    // ->letters()
+                    // ->mixedCase()
+                    // ->numbers()
+                    // ->symbols()
+                    // ->uncompromised()
             ],
             'confirm_password'  => 'required|required_with:new_password|same:new_password'
         );
@@ -1226,37 +1294,6 @@ class RegisterController extends BaseController
             $admin['id'] = 1;
             $admin['detail'] = true;
             $admin_data = $this->UserObj->getUser($admin);
-
-            $user_data = User::where('email', '=', $request->get('email'))->first();
-            if ($admin_data) {
-
-                // this email will sent to the user who have requested to forget password
-                $email_content = EmailTemplate::getEmailMessage(['id' => 8, 'detail' => true]);
-
-                $email_data = decodeShortCodesTemplate([
-                    'subject' => $email_content->subject,
-                    'body' => $email_content->body,
-                    'email_message_id' => 8,
-                    'user_id' => $user_data->id,
-                ]);
-
-                EmailLogs::saveUpdateEmailLogs([
-                    'email_msg_id' => 8,
-                    'sender_id' => $admin_data->id,
-                    'receiver_id' => $user_data->id,
-                    'email' => $user_data->email,
-                    'subject' => $email_data['email_subject'],
-                    'email_message' => $email_data['email_body'],
-                    'send_email_after' => 1, // 1 = Daily Email
-                ]);
-            }
-
-
-            // Mail::send('emails.reset_password', $data, function($message) use ($data) {
-            //     $message->to($data['email'])
-            //     ->subject($data['subject']);
-            // });
-
             return $this->sendResponse([], 'Your password has been updated.');
         }
     }

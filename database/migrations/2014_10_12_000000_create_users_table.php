@@ -19,12 +19,11 @@ class CreateUsersTable extends Migration
             $table->string('last_name', 100)->nullable();
             $table->string('email')->unique();
             $table->string('phone_number')->unique();
-          
             $table->string('password')->nullable();
             $table->enum('user_login_status', ['super-admin', 'admin', 'customer'])->default('customer');
-        
             $table->enum('user_status', ['Active', 'Block'])->default('Active');
             $table->enum('register_from', ['Web', 'Facebook', 'Gmail', 'Apple'])->default('Web');
+            $table->string('profile_image')->nullable();
             $table->timestamp('email_verified_at')->nullable();
             $table->enum('theme_mode', ['Light', 'Dark'])->default('Light');
             $table->double('time_spent')->default(0);

@@ -29,14 +29,17 @@ Route::post('login', [RegisterController::class, 'login_user']);
 Route::post('register', [RegisterController::class, 'register_user']);
 Route::post('forgot_password', [RegisterController::class, 'forgotPassword']);
 Route::post('change_password', [RegisterController::class, 'changePassword']);
+Route::post('logout', [RegisterController::class, 'logoutUser']);
 Route::get('verify-email/{token?}', [RegisterController::class, 'verifyUserEmail'])->name('email_verify');
 
 
 
 Route::middleware('auth:api')->group( function () {
 	
-	   Route::post('restaurant/{id}', [RestaurantController::class, 'update']); 
-	   Route::resource('restaurant', RestaurantController::class);
+	Route::post('restaurant/{id}', [RestaurantController::class, 'update']); 
+	Route::resource('restaurant', RestaurantController::class);
+
+	Route::post('editprofile', [RegisterController::class, 'edit_profile']); 
 
 	   Route::post('restaurant_menue/{id}', [RestaurantMenueController::class, 'update']);
 	   Route::resource('restaurant_menue', RestaurantMenueController::class);

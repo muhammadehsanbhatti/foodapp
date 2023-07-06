@@ -8,10 +8,15 @@ use Illuminate\Database\Eloquent\Model;
 class RestaurantFile extends Model
 {
     use HasFactory;
+
+    // public function restaurantMenue()
+    // {
+    //     return $this->hasMany(RestaurantMenue::class, 'restaurnat_menu_id');
+    // }
       public static function getRestaurantFile($posted_data = array())
     {
         $query = RestaurantFile::latest()
-        // ->with('user')
+        // ->with('restaurantMenue')
         ;
         if (isset($posted_data['id'])) {
             $query = $query->where('restaurant_files.id', $posted_data['id']);

@@ -11,10 +11,15 @@ class Business extends Model
     use HasFactory;
     use SoftDeletes;
 
+    public function restaurantMenue()
+    {
+        return $this->hasMany(RestaurantMenue::class, 'restaurant_id');
+    }
     
     public static function getBusiness($posted_data = array())
     {
         $query = Business::latest()
+        ->with('restaurantMenue')
         ;
         if (isset($posted_data['id'])) {
             $query = $query->where('businesses.id', $posted_data['id']);

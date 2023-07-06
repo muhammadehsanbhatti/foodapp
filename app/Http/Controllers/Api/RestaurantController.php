@@ -20,6 +20,9 @@ class RestaurantController extends Controller
         if (isset($request_data['business_name'])) {
             $posted_data['business_name'] = $request_data['business_name'];
         }
+        if (isset($request_data['business_id'])) {
+            $posted_data['id'] = $request_data['business_id'];
+        }
         $posted_data['paginate'] = 10;
         if($request_data){
             $posted_data = array_merge($posted_data,$request_data);
@@ -162,7 +165,11 @@ class RestaurantController extends Controller
             $filePath = 'storage/business_image/' . $file_name;
             $requested_data['business_image'] = $filePath;
         }
-
+        // foreach ($requested_data['cuisine_type'] as $cuisine_type_key => $cuisine_type_value) {
+        //     $cuisine_type[] = $cuisine_type_value;
+        //     $imploded_data = implode(',', $cuisine_type);
+        // }
+        // $requested_data['cuisine_type']  = $imploded_data;
         $data = $this->BusinessObj->saveUpdateBusiness($requested_data);
 
 

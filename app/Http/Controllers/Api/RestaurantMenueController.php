@@ -67,7 +67,8 @@ class RestaurantMenueController extends Controller
                         'restaurnat_menu_id' => $restaurant_menue->id,
                         'restaurant_file' => $filePath,
                     ]);
-                    $return_data[] = $response;
+                    // $restaurant_menue[] = $response->restaurant_file;
+                    // echo '<pre>'; print_r($restaurant_menue['restaurant_file']); echo '</pre>'; exit;
                 }
                 return $this->sendResponse($restaurant_menue, 'Restaurant menue added successfully.');
             }

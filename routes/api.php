@@ -34,6 +34,7 @@ Route::get('verify-email/{token?}', [RegisterController::class, 'verifyUserEmail
 
 
 Route::get('restaurant', [RestaurantController::class, 'index']); 
+Route::get('restaurant_menue', [RestaurantMenueController::class, 'index']); 
 
 Route::middleware('auth:api')->group( function () {
 	

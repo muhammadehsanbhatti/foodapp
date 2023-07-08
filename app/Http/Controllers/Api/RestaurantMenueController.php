@@ -70,6 +70,11 @@ class RestaurantMenueController extends Controller
                     // $restaurant_menue[] = $response->restaurant_file;
                     // echo '<pre>'; print_r($restaurant_menue['restaurant_file']); echo '</pre>'; exit;
                 }
+                $restaurant_menue['restaurant_file'] = $this->RestaurantFileObj->getRestaurantFile([
+                    'restaurnat_menu_id' => $restaurant_menue->id,
+                    // 'restaurant_file_relationship' =>true
+                ]);
+                // echo '<pre>'; print_r($restaurant_menue['restaurant_file']); echo '</pre>'; exit;
                 return $this->sendResponse($restaurant_menue, 'Restaurant menue added successfully.');
             }
         }else{
@@ -144,31 +149,38 @@ class RestaurantMenueController extends Controller
                 $update_ids = array_column($restaurant_menue_file, 'id');
                 foreach ($requested_data['restaurant_file'] as $restaurant_file_key =>$image) {
                
-                if (!empty($restaurant_menue_data)) {
-                    $base_url = public_path();
-                    $url = $base_url.'/'.$restaurant_menue_data[$restaurant_file_key];
-                    if (file_exists($url)) {
-                        unlink($url);
+                    if (!empty($restaurant_menue_data) && isset($update_ids[$restaurant_file_key])) {
+                        $base_url = public_path();
+                        $url = $base_url.'/'.$restaurant_menue_data[$restaurant_file_key];
+                        if (file_exists($url)) {
+                            unlink($url);
+                        }
                     }
-                }
 
-                $extension = $image->getClientOriginalExtension();
-                $file_name = time() . '_' . rand(1000000, 9999999) . '.' . $extension;
-                $filePath = $image->storeAs('restaurant_file', $file_name, 'public');
-                $filename = 'storage/restaurant_file/' . $file_name;
-                $response = $this->RestaurantFileObj->saveUpdateRestaurantFile([
-                    'restaurnat_menu_id' => $restaurant_menue->id,
-                    'update_id' => $update_ids[$restaurant_file_key],
-                    'restaurant_file' => $filename,
-                ]);
-                $return_data[] = $response;
+                    $extension = $image->getClientOriginalExtension();
+                    $file_name = time() . '_' . rand(1000000, 9999999) . '.' . $extension;
+                    $filePath = $image->storeAs('restaurant_file', $file_name, 'public');
+                    $filename = 'storage/restaurant_file/' . $file_name;
+
+                    $requested_file =array();
+                    $requested_file['restaurnat_menu_id'] = $restaurant_menue->id;
+                    $requested_file['restaurant_file'] =$filename;
+
+                   
+                    if (isset($update_ids[$restaurant_file_key])) {
+                       $requested_file['update_id'] =$update_ids[$restaurant_file_key];
+                    }
+                   
+                    $response = $this->RestaurantFileObj->saveUpdateRestaurantFile($requested_file);
+                    $return_data[] = $response;
+
+                }
+                // return $this->sendResponse($restaurant_menue, 'Restaurant menue added successfully.');
             }
-            // return $this->sendResponse($restaurant_menue, 'Restaurant menue added successfully.');
-        }
         }else{
             $error_message['error'] = 'Somthing went wrong';  
         }
-
+        $restaurant_menue['restaurant_file']= $restaurant_menue_file;
         // $data = $this->BusinessObj->saveUpdateBusiness($requested_data);
         return $this->sendResponse($restaurant_menue, 'Restaurante Updated successfully');
     }

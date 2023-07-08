@@ -28,9 +28,8 @@ class RestaurantMenue extends Model
     }
     public static function getRestaurantMenue($posted_data = array())
     {
-        $query = RestaurantMenue::latest()
-                                ->with('restaurantFile')
-        ;
+        $query = RestaurantMenue::latest();
+        
         if (isset($posted_data['id'])) {
             $query = $query->where('restaurant_menues.id', $posted_data['id']);
         }

@@ -13,7 +13,7 @@ class RestaurantMenue extends Model
   	use HasSku;
     public function restaurantFile()
     {
-        return $this->hasMany(RestaurantFile::class, 'restaurnat_menu_id');
+        return $this->hasMany(RestaurantFile::class,'restaurnat_menu_id');
     }
 
     public function skuOptions() : SkuOptions
@@ -28,7 +28,9 @@ class RestaurantMenue extends Model
     }
     public static function getRestaurantMenue($posted_data = array())
     {
-        $query = RestaurantMenue::latest();
+        $query = RestaurantMenue::latest()
+            ->with('restaurantFile')
+        ;
         
         if (isset($posted_data['id'])) {
             $query = $query->where('restaurant_menues.id', $posted_data['id']);

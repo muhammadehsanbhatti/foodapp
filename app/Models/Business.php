@@ -13,7 +13,7 @@ class Business extends Model
 
     public function restaurantMenue()
     {
-        return $this->hasMany(RestaurantMenue::class, 'restaurant_id');
+        return $this->hasMany(RestaurantMenue::class, 'restaurant_id')->with('restaurantFile');
     }
     
     public static function getBusiness($posted_data = array())

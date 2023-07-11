@@ -456,3 +456,62 @@ if (! function_exists('unlinkUploadedAssets')) {
         return true;
     }
 }
+
+
+function validateAndSendEmail($posted_data = array()) {
+    $return_data = array();
+    $return_data['data'] = $posted_data;
+    $return_data['is_success'] = false;
+    $message = '';
+
+    try {
+        $rules = array(
+            // 'email' => 'email:rfc,dns',
+            'email' => 'required|email',
+            'subject' => 'required',
+            'body' => 'required',
+        );
+        $validator = \Validator::make($posted_data, $rules);
+        if ($validator->fails()) {
+            $return_data['is_success'] = false;
+            $message = $validator->errors()->first();
+        
+        }else{
+            $email_template = 'emails.email_template';
+            if(isset($posted_data['email_template'])){
+                $email_template = $posted_data['email_template'];
+            }
+            
+            Mail::send($email_template, $posted_data, function($message) use ($posted_data) {
+                $message->to($posted_data['email'])
+                ->subject($posted_data['subject']);
+            });
+    
+            if( count(Mail::failures()) > 0 ) {
+                $return_data['is_success'] = false;
+                $message = 'There was one or more failures. They were: ';
+                // echo "There was one or more failures. They were: <br />";
+            
+                foreach(Mail::failures() as $email_address) {
+                    // echo " - $email_address <br />";
+                    $message .= ' - '.$email_address;
+                }
+            
+            } else {
+                $return_data['is_success'] = true;
+                $message = 'Email send successfully!';
+                // echo "No errors, all sent successfully!";
+            }
+        }
+    }catch (\Throwable $exception){
+        $return_data['is_success'] = true;
+        $message = $exception->getMessage();
+        // print_r('Exception: ');
+        // print_r($exception->getMessage());
+        // if ($exception instanceof \App\Exceptions\CustomException)  {
+        //     print_r($exception->getMessage());
+        // }
+    }
+    $return_data['message'] = $message;
+    return $return_data;
+}

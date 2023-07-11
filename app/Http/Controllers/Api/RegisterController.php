@@ -1173,91 +1173,53 @@ class RegisterController extends BaseController
 
     public function forgotPassword(Request $request)
     {
+        $rules = array(
+            // 'email' => 'required|email|unique:users',
+            'email' => 'required|email',
+        );
+        $validator = \Validator::make($request->all(), $rules);
 
-        $data = $request->validate([
-            'email' => 'required|email|exists:users',
-        ]);
+        if ($validator->fails()) {
+            $error = $validator->errors()->first();
+            return $this->sendError($error);
+        } else {
 
-        // Delete all old code that user send before.
-        ResetCodePassword::where('email', $request->email)->delete();
+            $users = $this->UserObj::where('email', '=', $request->input('email'))->first();
+            if ($users === null) {
+                // echo 'User does not exist';
+                return $this->sendError('We do not recognize this email address. Please try again.');
 
-        // Generate random code
-        $data['code'] = mt_rand(100000, 999999);
+                // \Session::flash('We do not recognize this email address. Please try again.');
+                // return redirect('/forgot-password');
+                // return redirect('/login');
+            } else {
+                // echo 'User exits';
+                $random_hash = substr(md5(uniqid(rand(), true)), 10, 10); 
+                $email = $request->get('email');
+                $password = Hash::make($random_hash);
 
-        // Create a new code
-        $codeData = ResetCodePassword::create($data);
+                // $posted_data['email'] = $email;
+                // $posted_data['password'] = $password;
+                // $this->UserObj->saveUpdateUser($posted_data);
 
-        // Send email to user
-        Mail::to($request->email)->send(new SendCodeResetPassword($codeData->code));
+                \DB::update('update users set password = ? where email = ?',[$password,$email]);
 
-        return $this->sendResponse('message', ['message' => trans('passwords.sent')]);
+                $data = [
+                    'new_password' => $random_hash,
+                    'subject' => 'Reset Password',
+                    'email' => $email,
+                    'email_template' => 'emails.reset_password',
+                    'body' => 'emails.reset_password'
+                ];
+                validateAndSendEmail($data);
+                return $this->sendResponse($data['email'], 'Your password has been reset. Please check your email!');
 
+                // \Session::flash('message', 'Your password has been reset. Please check your email!');
+                // return redirect('/login');
+            }
 
-        // $rules = array(
-        //     'email' => 'required||email:rfc,dns|email',
-        // );
-        // $validator = \Validator::make($request->all(), $rules);
+        }
 
-        // if ($validator->fails()) {
-        //     return $this->sendError($validator->errors()->first(), ["error" => $validator->errors()->first()]);
-        // } else {
-
-        //     $users = User::where('email', '=', $request->input('email'))->first();
-        //     if ($users === null) {
-
-        //         $error_message['error'] = 'We do not recognize this email address. Please try again.';
-        //         return $this->sendError($error_message['error'], $error_message);
-        //     } else {
-        //         $random_hash = substr(md5(uniqid(rand(), true)), 10, 10);
-        //         $email = $request->get('email');
-        //         $password = Hash::make($random_hash);
-
-        //         \DB::update('update users set password = ? where email = ?', [$password, $email]);
-
-        //         $data = [
-        //             'new_password' => $random_hash,
-        //             'subject' => 'Reset Password',
-        //             'email' => $email
-        //         ];
-
-        //         $admin['id'] = 1;
-        //         $admin['detail'] = true;
-        //         $admin_data = $this->UserObj->getUser($admin);
-
-        //         if ($admin_data) {
-
-        //             // this email will sent to the user who have requested to forget password
-        //             $email_content = EmailTemplate::getEmailMessage(['id' => 7, 'detail' => true]);
-
-        //             $email_data = decodeShortCodesTemplate([
-        //                 'subject' => $email_content->subject,
-        //                 'body' => $email_content->body,
-        //                 'email_message_id' => 7,
-        //                 'user_id' => $users->id,
-        //                 'new_password' => $random_hash,
-        //             ]);
-
-        //             EmailLogs::saveUpdateEmailLogs([
-        //                 'email_msg_id' => 7,
-        //                 'sender_id' => $admin_data->id,
-        //                 'receiver_id' => $users->id,
-        //                 'email' => $users->email,
-        //                 'subject' => $email_data['email_subject'],
-        //                 'email_message' => $email_data['email_body'],
-        //                 'send_email_after' => 1, // 1 = Daily Email
-        //             ]);
-        //         }
-
-
-        //         /*
-        //         Mail::send('emails.reset_password', $data, function($message) use ($data) {
-        //             $message->to($data['email'])
-        //             ->subject($data['subject']);
-        //         });
-        //         */
-
-        //         return $this->sendResponse($data, 'Your password has been reset. Please check your email.');
-        
         
     }
 

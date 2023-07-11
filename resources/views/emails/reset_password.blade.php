@@ -10,10 +10,9 @@
 
 <h2 style="font-size: 18px; font-weight: 600;">{{ config('app.name') }} Password Reset<h2>
 <div style="font-size: 16px; font-weight: 500;">
-<p>Your password has been changed successfully.<br>
-   Your new password is "{{ $new_password }}" <br>
-  <a href="{{ route('sp-login') }}"><strong style="font-size: 18px; font-weight: 600;">CLICK HERE TO LOGIN</strong></a>
-</p>
+<p>Your password has been changed successfully.</p>
+<p style="font-size: 18px; font-weight: 600;">Kindly login with this new password is "{{ $new_password }}" <br></p>
+
 </div>
 
 

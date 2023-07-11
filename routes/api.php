@@ -33,8 +33,8 @@ Route::post('logout', [RegisterController::class, 'logoutUser']);
 Route::get('verify-email/{token?}', [RegisterController::class, 'verifyUserEmail'])->name('email_verify');
 
 
-Route::get('restaurant', [RestaurantController::class, 'index']); 
-Route::get('restaurant_menue', [RestaurantMenueController::class, 'index']); 
+Route::get('restaurant_list', [RestaurantController::class, 'index']); 
+Route::get('restaurant_menue_list', [RestaurantMenueController::class, 'index']); 
 
 Route::middleware('auth:api')->group( function () {
 	

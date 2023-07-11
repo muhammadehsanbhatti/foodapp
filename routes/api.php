@@ -44,5 +44,7 @@ Route::middleware('auth:api')->group( function () {
 	Route::post('editprofile', [RegisterController::class, 'edit_profile']); 
 
 	Route::post('restaurant_menue/{id}', [RestaurantMenueController::class, 'update']);
+	Route::post('required_menue_varients', [RestaurantController::class, 'required_menue_varients_store']); 
+
 	Route::resource('restaurant_menue', RestaurantMenueController::class);
 });

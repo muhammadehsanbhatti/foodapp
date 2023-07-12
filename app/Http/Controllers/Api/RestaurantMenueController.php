@@ -63,6 +63,7 @@ class RestaurantMenueController extends Controller
                     $file_name = time() . '_' . rand(1000000, 9999999) . '.' . $extension;
                     $filePath = $image->storeAs('restaurant_file', $file_name, 'public');
                     $filePath = 'storage/restaurant_file/' . $file_name;
+                    
                     $response = $this->RestaurantFileObj->saveUpdateRestaurantFile([
                         'restaurnat_menu_id' => $restaurant_menue->id,
                         'restaurant_file' => $filePath,
@@ -70,7 +71,7 @@ class RestaurantMenueController extends Controller
                     // $restaurant_menue[] = $response->restaurant_file;
                     // echo '<pre>'; print_r($restaurant_menue['restaurant_file']); echo '</pre>'; exit;
                 }
-                $restaurant_menue['restaurant_file'] = $this->RestaurantFileObj->getRestaurantFile([
+                $restaurant_menue['restaurant_menue_files'] = $this->RestaurantFileObj->getRestaurantFile([
                     'restaurnat_menu_id' => $restaurant_menue->id,
                     // 'restaurant_file_relationship' =>true
                 ]);
@@ -180,7 +181,7 @@ class RestaurantMenueController extends Controller
         }else{
             $error_message['error'] = 'Somthing went wrong';  
         }
-        $restaurant_menue['restaurant_file']= $restaurant_menue_file;
+        // $restaurant_menue['restaurant_file']= $restaurant_menue_file;
         // $data = $this->BusinessObj->saveUpdateBusiness($requested_data);
         return $this->sendResponse($restaurant_menue, 'Restaurante Updated successfully');
     }
@@ -193,6 +194,8 @@ class RestaurantMenueController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $this->RestaurantMenueObj->deleteRestaurantMenue($id);
+        return $this->sendResponse('Success', 'Restaurant menue deleted successfully');
+        
     }
 }

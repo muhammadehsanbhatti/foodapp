@@ -13,7 +13,8 @@ class RestaurantMenue extends Model
   	use HasSku;
     public function restaurantFile()
     {
-        return $this->hasMany(RestaurantFile::class,'restaurnat_menu_id');
+        // return $this->hasMany(RestaurantFile::class,'restaurnat_menu_id');
+        return $this->hasMany(RestaurantFile::class, 'restaurnat_menu_id');
     }
 
     public function skuOptions() : SkuOptions

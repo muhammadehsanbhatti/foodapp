@@ -9,14 +9,14 @@ class RestaurantFile extends Model
 {
     use HasFactory;
 
-    // public function restaurantMenue()
+    // public function restaurantMenueFile()
     // {
-    //     return $this->hasMany(RestaurantMenue::class, 'restaurnat_menu_id');
+    //     return $this->belongsTo(RestaurantMenue::class,'restaurnat_menu_id');
     // }
       public static function getRestaurantFile($posted_data = array())
     {
         $query = RestaurantFile::latest()
-        // ->with('restaurantMenue')
+        // ->with('restaurantMenueFile')
         ;
         if (isset($posted_data['id'])) {
             $query = $query->where('restaurant_files.id', $posted_data['id']);

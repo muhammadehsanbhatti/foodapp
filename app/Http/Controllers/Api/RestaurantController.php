@@ -23,6 +23,10 @@ class RestaurantController extends Controller
         if (isset($request_data['business_id'])) {
             $posted_data['id'] = $request_data['business_id'];
         }
+        
+        if (isset($request_data['cuisine_type'])) {
+            $posted_data['cuisine_type'] = $request_data['cuisine_type'];
+        }
         $posted_data['paginate'] = 10;
         if($request_data){
             $posted_data = array_merge($posted_data,$request_data);

@@ -3,19 +3,19 @@
 namespace App\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
-use App\Http\Controllers\Api\BaseController as BaseController;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Mail;
 use Illuminate\Validation\Rules\Password;
 use MikeMcLin\WpPassword\Facades\WpPassword;
+use App\Http\Controllers\Controller;
 use Validator;
 use DB;
 use App\Models\User;
 use App\Models\UserEducationalInformation;
 use Carbon\Carbon;
 
-class RegisterController extends BaseController
+class RegisterController extends Controller
 {
 
 //Test User

@@ -24,6 +24,8 @@ use App\Models\Permission;
 use App\Models\AssignPermission;
 use App\Models\RestaurantMenue;
 use App\Models\RestaurantFile;
+use App\Models\MenueVariant;
+
 use DB;
 use Validator;
 use Auth;
@@ -51,6 +53,7 @@ class Controller extends BaseController
     public $BusinessObj;
     public $RestaurantMenueObj;
     public $RestaurantFileObj;
+    public $MenueVariantsObj;
 
     public function __construct() {
         
@@ -69,6 +72,8 @@ class Controller extends BaseController
         $this->BusinessObj = new Business();
         $this->RestaurantMenueObj = new RestaurantMenue();
         $this->RestaurantFileObj = new RestaurantFile();
+        $this->MenueVariantsObj = new MenueVariant();
+
     }
 
     /**
@@ -93,7 +98,7 @@ class Controller extends BaseController
      *
      * @return \Illuminate\Http\Response
      */
-    public function sendError($error, $errorMessages = array(), $code = 200)
+    public function sendError($error, $errorMessages = array(), $code = 404)
     {
     	$response = [
             'success' => false,

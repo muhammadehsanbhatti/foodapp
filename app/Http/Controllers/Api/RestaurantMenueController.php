@@ -186,6 +186,39 @@ class RestaurantMenueController extends Controller
         return $this->sendResponse($restaurant_menue, 'Restaurante Updated successfully');
     }
 
+    public function required_menue_varients_store(Request $request){
+       
+
+        $requested_data = $request->all();
+        $base_url = public_path();
+        $rules = array(
+        
+            'menue_id'    => 'required|exists:restaurant_menues,id',
+            'menue_type'        => 'required',
+            'variant_type'      => 'required',
+            'variant_name'    => 'required',
+            // 'variant_price'       => 'required'
+        );
+        $validator = \Validator::make($requested_data, $rules);
+
+        if ($validator->fails()) {
+            return $this->sendError($validator->errors()->first(), ["error" => $validator->errors()->first()]);
+        }
+        $posted_data =array();
+        $posted_data['menue_id']=  $requested_data['menue_id'];
+        $posted_data['menue_type']= $requested_data['menue_type'];
+        $posted_data['variant_type'] = $requested_data['variant_type'];
+        foreach ($requested_data['variant_name'] as $variant_key => $variant_value) {
+            
+            $posted_data['variant_name']= $variant_value;
+            // $posted_data['variant_price']= $requested_data['variant_price'];
+            // echo '<pre>'; print_r($posted_data); echo '</pre>'; exit;
+            $data = $this->MenueVariantsObj->saveUpdateMenueVariant($posted_data);
+            return $this->sendResponse($data, 'Restaurante variants added successfully');
+        }
+
+    }
+
     /**
      * Remove the specified resource from storage.
      *

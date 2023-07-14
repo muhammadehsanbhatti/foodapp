@@ -19,8 +19,8 @@ class MenueVariant extends Model
         if (isset($posted_data['id'])) {
             $query = $query->where('menue_variants.id', $posted_data['id']);
         }
-        if (isset($posted_data['menu_id'])) {
-            $query = $query->where('menue_variants.menu_id', $posted_data['menu_id']);
+        if (isset($posted_data['restauran_menue_id'])) {
+            $query = $query->where('menue_variants.restauran_menue_id', $posted_data['restauran_menue_id']);
         }
         if (isset($posted_data['variant_name'])) {
             $query = $query->where('menue_variants.variant_name', $posted_data['variant_name']);
@@ -79,8 +79,8 @@ class MenueVariant extends Model
             $data = new MenueVariant;
         }
 
-        if (isset($posted_data['menu_id'])) {
-            $data->menu_id = $posted_data['menu_id'];
+        if (isset($posted_data['restauran_menue_id'])) {
+            $data->restauran_menue_id = $posted_data['restauran_menue_id'];
         }
         if (isset($posted_data['variant_name'])) {
             $data->variant_name = $posted_data['variant_name'];

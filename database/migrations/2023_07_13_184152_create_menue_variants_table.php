@@ -15,8 +15,8 @@ class CreateMenueVariantsTable extends Migration
     {
         Schema::create('menue_variants', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('menu_id');
-            $table->foreign('menu_id')->references('id')->on('restaurant_menues')->onUpdate('cascade')->onDelete('cascade');
+            $table->unsignedBigInteger('restauran_menue_id');
+            $table->foreign('restauran_menue_id')->references('id')->on('restaurant_menues')->onUpdate('cascade')->onDelete('cascade');
             $table->string('variant_name')->nullable();
             $table->string('variant_price')->nullable();
             $table->string('variant_image')->nullable();

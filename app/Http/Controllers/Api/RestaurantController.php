@@ -35,6 +35,96 @@ class RestaurantController extends Controller
        
     }
 
+    public function get_cuisine_list(Request $request){
+        $posted_data = array();
+        $request_data = $request->all();
+        // $posted_data['user_id'] = \Auth::user()->id;
+        if (isset($request_data['cuisine_name'])) {
+            $posted_data['cuisine_name'] = $request_data['cuisine_name'];
+        }
+        $posted_data['paginate'] = 10;
+        if($request_data){
+            $posted_data = array_merge($posted_data,$request_data);
+        }
+        $data = $this->BusinessCuisineObj->getBusinessCuisine($posted_data);
+        return $this->sendResponse($data, 'Success');
+    }
+
+    public function cuisine_store(Request $request){
+       $posted_data = array();
+        $requested_data = $request->all();
+        
+        $rules = array(
+            
+            'cuisine_name' => 'required',
+            'cuisine_image' => 'required|max:250',
+        );
+       
+        $validator = \Validator::make($requested_data, $rules);
+
+        if ($validator->fails()) {
+            return $this->sendError($validator->errors()->first(), ["error" => $validator->errors()->first()]);
+        }
+
+        foreach ($requested_data['cuisine_name'] as $cuisine_key => $cuisine_value) {
+            $posted_data['cuisine_name']= $cuisine_value;
+            $cuisine_image= $requested_data['cuisine_image'][$cuisine_key];
+
+            if($request->file('cuisine_image')) {
+          
+                $extension = $cuisine_image->getClientOriginalExtension();
+                $file_name = time() . '_' . $cuisine_image->getClientOriginalName();
+                $filePath = $cuisine_image->storeAs('cuisine_image', $file_name, 'public');
+                $filePath = 'storage/cuisine_image/' . $file_name;
+                $posted_data['cuisine_image'] = $filePath;
+            }
+            $data[] = $this->BusinessCuisineObj->saveUpdateBusinessCuisine($posted_data);
+        }
+        return $this->sendResponse($data, 'Cuisine created successfully');
+    }
+
+    public function cuisine_update(Request $request,$id){
+        $posted_data = array();
+         $requested_data = $request->all();
+         $requested_data['update_id'] = $id;
+         $rules = array(
+             
+             'cuisine_name' => 'required',
+             'cuisine_image' => 'required|max:250',
+         );
+        
+         $validator = \Validator::make($requested_data, $rules);
+ 
+         if ($validator->fails()) {
+             return $this->sendError($validator->errors()->first(), ["error" => $validator->errors()->first()]);
+         }
+
+        $posted_data['cuisine_name'] = $requested_data['cuisine_name'];
+        if($request->file('cuisine_image')) {
+            $cuisine_data = $this->BusinessCuisineObj->getBusinessCuisine([
+                'id' => $id,
+                'detail' => true 
+            ]);
+            if(isset($cuisine_data)){
+                    $base_url = public_path();
+                    $url = $base_url.'/'.$cuisine_data->cuisine_image;
+                    if (file_exists($url)) {
+                        unlink($url);
+                    }
+            }
+                
+            $extension = $request->cuisine_image->getClientOriginalExtension();
+            $file_name = time() . '_' . $request->cuisine_image->getClientOriginalName();
+            $filePath = $request->cuisine_image->storeAs('cuisine_image', $file_name, 'public');
+            $filePath = 'storage/cuisine_image/' . $file_name;
+            $posted_data['cuisine_image'] = $filePath;
+        }
+        
+        $data= $this->BusinessCuisineObj->saveUpdateBusinessCuisine($posted_data);
+        
+         return $this->sendResponse($data, 'Cuisine updated successfully');
+     }
+
     /**
      * Show the form for creating a new resource.
      *

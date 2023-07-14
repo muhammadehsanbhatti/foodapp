@@ -34,13 +34,16 @@ Route::get('verify-email/{token?}', [RegisterController::class, 'verifyUserEmail
 
 
 Route::get('restaurant_list', [RestaurantController::class, 'index']); 
+Route::get('cuisine_list', [RestaurantController::class, 'get_cuisine_list']); 
 Route::get('restaurant_menue_list', [RestaurantMenueController::class, 'index']); 
 
 Route::middleware('auth:api')->group( function () {
 	
+	Route::post('cuisine_store', [RestaurantController::class, 'cuisine_store']); 
+	Route::post('cuisine_update/{id}', [RestaurantController::class, 'cuisine_update']); 
 	Route::post('restaurant/{id}', [RestaurantController::class, 'update']); 
 	Route::resource('restaurant', RestaurantController::class);
-
+	
 	Route::post('editprofile', [RegisterController::class, 'edit_profile']); 
 
 	Route::post('restaurant_menue/{id}', [RestaurantMenueController::class, 'update']);

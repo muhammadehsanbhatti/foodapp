@@ -25,6 +25,8 @@ use App\Models\AssignPermission;
 use App\Models\RestaurantMenue;
 use App\Models\RestaurantFile;
 use App\Models\MenueVariant;
+use App\Models\BusinessCuisine;
+
 
 use DB;
 use Validator;
@@ -54,6 +56,7 @@ class Controller extends BaseController
     public $RestaurantMenueObj;
     public $RestaurantFileObj;
     public $MenueVariantsObj;
+    public $BusinessCuisineObj;
 
     public function __construct() {
         
@@ -73,6 +76,7 @@ class Controller extends BaseController
         $this->RestaurantMenueObj = new RestaurantMenue();
         $this->RestaurantFileObj = new RestaurantFile();
         $this->MenueVariantsObj = new MenueVariant();
+        $this->BusinessCuisineObj = new BusinessCuisine();
 
     }
 

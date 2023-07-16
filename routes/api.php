@@ -48,6 +48,7 @@ Route::middleware('auth:api')->group( function () {
 
 	Route::post('restaurant_menue/{id}', [RestaurantMenueController::class, 'update']);
 	Route::post('required_menue_varients', [RestaurantMenueController::class, 'required_menue_varients_store']); 
+	Route::post('optional_menue_varients', [RestaurantMenueController::class, 'optional_menue_varients_store']); 
 
 	Route::resource('restaurant_menue', RestaurantMenueController::class);
 });

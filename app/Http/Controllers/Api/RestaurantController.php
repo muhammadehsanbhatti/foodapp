@@ -114,7 +114,7 @@ class RestaurantController extends Controller
             }
                 
             $extension = $request->cuisine_image->getClientOriginalExtension();
-            $file_name = time() . '_' . $request->cuisine_image->getClientOriginalName();
+            $file_name = time() . '_' . rand(1000000, 9999999) . '.' . $extension;
             $filePath = $request->cuisine_image->storeAs('cuisine_image', $file_name, 'public');
             $filePath = 'storage/cuisine_image/' . $file_name;
             $posted_data['cuisine_image'] = $filePath;

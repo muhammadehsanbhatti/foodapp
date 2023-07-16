@@ -188,8 +188,6 @@ class RestaurantMenueController extends Controller
 
     public function required_menue_varients_store(Request $request)
     {
-       
-
         $requested_data = $request->all();
         $base_url = public_path();
         $rules = array(
@@ -214,7 +212,46 @@ class RestaurantMenueController extends Controller
             $posted_data['variant_price']= $requested_data['variant_price'][$variant_key];
             $data[] = $this->MenueVariantsObj->saveUpdateMenueVariant($posted_data);
         }
-        return $this->sendResponse($data, 'Restaurante variants added successfully');
+        return $this->sendResponse($data, 'Restaurante required variants added successfully');
+
+    }
+
+    public function optional_menue_varients_store(Request $request)
+    {
+        $requested_data = $request->all();
+        $rules = array(
+        
+            'restauran_menue_id'    => 'required|exists:restaurant_menues,id',
+            'menue_type'        => 'required',
+            'variant_type'      => 'required',
+            'variant_name'    => 'required',
+            'variant_price'       => 'required',
+            // 'variant_image' => 'required'
+        );
+        $validator = \Validator::make($requested_data, $rules);
+
+        if ($validator->fails()) {
+            return $this->sendError($validator->errors()->first(), ["error" => $validator->errors()->first()]);
+        }
+        $posted_data = array();
+        $posted_data['restauran_menue_id']=  $requested_data['restauran_menue_id'];
+        $posted_data['menue_type']= $requested_data['menue_type'];
+        $posted_data['variant_type'] = $requested_data['variant_type'];
+
+        foreach ($requested_data['variant_image'] as $variant_key => $variant_image_value) {
+            $posted_data['variant_name']=$requested_data['variant_name'][$variant_key];
+            $posted_data['variant_price']= $requested_data['variant_price'][$variant_key];
+
+            if($request->file('variant_image')) {
+                $extension = $variant_image_value->getClientOriginalExtension();
+                $file_name = time() . '_' . rand(1000000, 9999999) . '.' . $extension;
+                $filePath =  $variant_image_value->storeAs('optional_menue_variant_images', $file_name, 'public');
+                $filePath = 'storage/optional_menue_variant_images/' . $file_name;
+                $posted_data['variant_image'] = $filePath;
+            }
+            $data[] = $this->MenueVariantsObj->saveUpdateMenueVariant($posted_data);
+        }
+        return $this->sendResponse($data, 'Restaurante optional variants added successfully');
 
     }
 

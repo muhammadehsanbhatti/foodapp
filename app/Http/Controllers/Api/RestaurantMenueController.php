@@ -82,6 +82,7 @@ class RestaurantMenueController extends Controller
                 }
 
                 $requestdata = array();
+                $requestdata['restauran_menue_id']=  $restaurant_menue->id;
                 $requestdata['menue_type']= $request_data['optional_menue_type'];
                 $requestdata['variant_type'] = $request_data['optional_variant_type'];
 

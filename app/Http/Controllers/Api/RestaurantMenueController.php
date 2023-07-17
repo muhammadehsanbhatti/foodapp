@@ -96,7 +96,7 @@ class RestaurantMenueController extends Controller
                         $filePath = 'storage/optional_menue_variant_images/' . $file_name;
                         $requestdata['variant_image'] = $filePath;
                     }
-                    $optional_menue_variants[] = $this->MenueVariantsObj->saveUpdateMenueVariant($posted_data);
+                    $optional_menue_variants[] = $this->MenueVariantsObj->saveUpdateMenueVariant($requestdata);
                 }
 
 

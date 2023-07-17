@@ -17,6 +17,11 @@ class RestaurantMenue extends Model
         return $this->hasMany(RestaurantFile::class, 'restaurnat_menu_id');
     }
 
+    public function restaurantMenueVariant()
+    {
+        // return $this->hasMany(RestaurantFile::class,'restaurnat_menu_id');
+        return $this->hasMany(MenueVariant::class, 'restauran_menue_id');
+    }
     public function skuOptions() : SkuOptions
     {
         return SkuOptions::make()
@@ -31,6 +36,7 @@ class RestaurantMenue extends Model
     {
         $query = RestaurantMenue::latest()
             ->with('restaurantFile')
+            ->with('restaurantMenueVariant')
         ;
         
         if (isset($posted_data['id'])) {

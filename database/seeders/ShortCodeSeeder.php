@@ -29,10 +29,31 @@ class ShortCodeSeeder extends Seeder
                             'title' => '[login_url]',
                             'created_at' => now(),
                             'updated_at' => now(),
+                        ],
+                        [
+                            'title' => '[app_name]',
+                            'created_at' => now(),
+                            'updated_at' => now(),
+                        ],
+                        [
+                            'title' => '[email_verification_code]',
+                            'created_at' => now(),
+                            'updated_at' => now(),
+                        ],
+                        [
+                            'title' => '[email_verification_link]',
+                            'created_at' => now(),
+                            'updated_at' => now(),
+                        ],
+                        [
+                            'title' => '[otp_code]',
+                            'created_at' => now(),
+                            'updated_at' => now(),
                         ]
+                        
 
                     ]);
-                } else { echo "<br>[Short Code Table is not empty] "; }
+                } else { echo "[Short Code Table is not empty]\n"; }
 
             }catch(Exception $e) {
                 echo $e->getMessage();

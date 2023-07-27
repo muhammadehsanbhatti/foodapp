@@ -1171,116 +1171,267 @@ class RegisterController extends Controller
         return view('emails.general_email', compact('email_data'));
     }
 
-    public function forgotPassword(Request $request)
-    {
-        $rules = array(
-            // 'email' => 'required|email|unique:users',
-            'email' => 'required|email',
-        );
-        $validator = \Validator::make($request->all(), $rules);
+    // public function forgotPassword(Request $request)
+    // {
+    //     $rules = array(
+    //         // 'email' => 'required|email|unique:users',
+    //         'email' => 'required|email',
+    //     );
+    //     $validator = \Validator::make($request->all(), $rules);
 
-        if ($validator->fails()) {
-            $error = $validator->errors()->first();
-            return $this->sendError($error);
-        } else {
+    //     if ($validator->fails()) {
+    //         $error = $validator->errors()->first();
+    //         return $this->sendError($error);
+    //     } else {
 
-            $users = $this->UserObj::where('email', '=', $request->input('email'))->first();
-            if ($users === null) {
-                // echo 'User does not exist';
-                return $this->sendError('We do not recognize this email address. Please try again.');
+    //         $users = $this->UserObj::where('email', '=', $request->input('email'))->first();
+    //         if ($users === null) {
+    //             // echo 'User does not exist';
+    //             return $this->sendError('We do not recognize this email address. Please try again.');
 
-                // \Session::flash('We do not recognize this email address. Please try again.');
-                // return redirect('/forgot-password');
-                // return redirect('/login');
-            } else {
-                // echo 'User exits';
-                $random_hash = substr(md5(uniqid(rand(), true)), 10, 10); 
-                $email = $request->get('email');
-                $password = Hash::make($random_hash);
+    //             // \Session::flash('We do not recognize this email address. Please try again.');
+    //             // return redirect('/forgot-password');
+    //             // return redirect('/login');
+    //         } else {
+    //             // echo 'User exits';
+    //             $random_hash = substr(md5(uniqid(rand(), true)), 10, 10); 
+    //             $email = $request->get('email');
+    //             $password = Hash::make($random_hash);
 
-                // $posted_data['email'] = $email;
-                // $posted_data['password'] = $password;
-                // $this->UserObj->saveUpdateUser($posted_data);
+    //             // $posted_data['email'] = $email;
+    //             // $posted_data['password'] = $password;
+    //             // $this->UserObj->saveUpdateUser($posted_data);
 
-                \DB::update('update users set password = ? where email = ?',[$password,$email]);
+    //             \DB::update('update users set password = ? where email = ?',[$password,$email]);
 
-                $data = [
-                    'new_password' => $random_hash,
-                    'subject' => 'Reset Password',
-                    'email' => $email,
-                    'email_template' => 'emails.reset_password',
-                    'body' => 'emails.reset_password'
-                ];
-                validateAndSendEmail($data);
-                return $this->sendResponse($data['email'], 'Your password has been reset. Please check your email!');
+    //             $data = [
+    //                 'new_password' => $random_hash,
+    //                 'subject' => 'Reset Password',
+    //                 'email' => $email,
+    //                 'email_template' => 'emails.reset_password',
+    //                 'body' => 'emails.reset_password'
+    //             ];
+    //             validateAndSendEmail($data);
+    //             return $this->sendResponse($data['email'], 'Your password has been reset. Please check your email!');
 
-                // \Session::flash('message', 'Your password has been reset. Please check your email!');
-                // return redirect('/login');
-            }
+    //             // \Session::flash('message', 'Your password has been reset. Please check your email!');
+    //             // return redirect('/login');
+    //         }
 
-        }
+    //     }
 
         
+    // }
+
+    public function forgotPassword(Request $request)
+    {
+        $request_data = $request->all();
+        $rules = array(
+            'email' => 'required|email|exists:users'
+        );
+
+        $messages = array(
+            'email.exists' => 'We do not recognize this email address. Please try again.',
+        );
+
+        $validator = \Validator::make($request_data, $rules, $messages);
+
+        if ($validator->fails()) {
+            return $this->sendError($validator->errors()->first(), $validator->errors());     
+        } else {
+
+        
+            $otp = substr(md5(uniqid(rand(), true)), 5, 5); 
+            $userDetail = $this->UserObj->getUser([
+                'email' => $request_data['email'],
+                'detail' => true
+            ]);
+            
+            if($userDetail){
+                $response = $this->UserObj->saveUpdateUser([
+                    'update_id' => $userDetail->id,
+                    'email_verification_code' => $otp,
+                ]);
+                if($response){
+                    saveEmailLog([
+                        'user_id' => $response->id,
+                        'email_template_id' => 6, //OTP Verification
+                        'otp_code' =>$otp
+                    ]);
+                    return $this->sendResponse($otp, 'Your password has been reset. Please check your email.');
+                }
+            }
+
+            // if($userDetail){
+            //     $response = $this->UserObj->saveUpdateUser([
+            //         'update_id' => $userDetail->id,
+            //         'password' => $password
+            //     ]);
+            //     if($response){
+            //         saveEmailLog([
+            //             'user_id' => $response->id,
+            //             'email_template_id' => 5, //email forgot password
+            //             'new_password' => $password
+            //         ]);
+            //         return $this->sendResponse($password, 'Your password has been reset. Please check your email.');
+            //     }
+            // }
+
+
+            return $this->sendResponse([], 'We do not recognize this email address. Please try again.');
+        }
+    }
+
+    public function verifyOtp(Request $request)
+    {
+        $request_data = $request->all();
+        $rules = array(
+            'email_verification_code' => 'required',
+            'new_password' => 'required|min:8|regex:/^.*(?=.{3,})(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[\d\x])(?=.*[!$#%@^&*()_+]).*$/',
+            'confirm_password'  => 'required_with:new_password|same:new_password',
+        );
+
+        $messages = array(
+            'new_password.regex' => 'Password must be atleast eight characters long and must use atleast one letter, number and special character.',
+        );
+
+        $validator = \Validator::make($request_data, $rules, $messages);
+
+        if ($validator->fails()) {
+            return $this->sendError($validator->errors()->first(), $validator->errors());     
+        } else {
+
+            $userDetail = $this->UserObj->getUser([
+                'email_verification_code' => $request_data['email_verification_code'],
+                'detail' => true
+            ]);
+            
+            if($userDetail){
+                $response = $this->UserObj->saveUpdateUser([
+                    'update_id' => $userDetail->id,
+                    'password' => $request_data['new_password'],
+                    'email_verification_code' => 'NULL'
+                ]);
+                if($response){
+                    saveEmailLog([
+                        'user_id' => $response->id,
+                        'email_template_id' => 5, //email forgot password
+                        'new_password' => $request_data['new_password']
+                    ]);
+                    return $this->sendResponse($request_data['email_verification_code'], 'Your password has been reset. Please check your email.');
+                }
+            }
+            return $this->sendResponse([], 'We do not recognize this email address. Please try again.');
+        }
     }
 
     
-
     public function changePassword(Request $request)
     {
-        $params = $request->all();
+        $requested_data = $request->all();
         $rules = array(
-            'email'             => 'required|email:rfc,dns|email',
+            'email'             => 'required|email|exists:users',
             'old_password'      => 'required',
-            // 'new_password'      => 'required|min:4',
-            'new_password'      => [
-                'required', Password::min(8)
-                    // ->letters()
-                    // ->mixedCase()
-                    // ->numbers()
-                    // ->symbols()
-                    // ->uncompromised()
-            ],
+            'new_password'      => 'required|min:8|regex:/^.*(?=.{3,})(?=.*[a-zA-Z])(?=.*[0-9])(?=.*[\d\x])(?=.*[!$#%@^&*()_+]).*$/',
             'confirm_password'  => 'required|required_with:new_password|same:new_password'
         );
-        $validator = \Validator::make($request->all(), $rules);
+
+        $messages = array(
+            'new_password.regex' => 'Password must be atleast eight characters long and must use atleast one letter, number and special character.',
+        );
+        $validator = \Validator::make($request->all(), $rules, $messages);
 
         if ($validator->fails()) {
-            return $this->sendError($validator->errors()->first(), ["error" => $validator->errors()->first()]);
+            return $this->sendError($validator->errors()->first(), $validator->errors()); 
         }
 
         $response = $this->authorizeUser([
-            'email' => $params['email'],
-            'password' => $params['old_password'],
+            'email' => $requested_data['email'],
+            'password' => $requested_data['old_password'],
             'mode' => 'only_validate',
         ]);
 
-        if ($params['old_password'] == $params['new_password']) {
-            $error_message['error'] = 'New and old password must be different.';
-            return $this->sendError($error_message['error'], $error_message);
-        }
-
         if (!$response) {
-            $error_message['error'] = 'Your old password is incorrect.';
-            return $this->sendError($error_message['error'], $error_message);
-        } else {
-            $new_password = $params['confirm_password'];
-            $email = $request->get('email');
-            $password = Hash::make($new_password);
+            return $this->sendError('Your old password is incorrect.');
+        }
+        else {
 
-            \DB::update('update users set password = ? where email = ?', [$password, $email]);
+            if ($requested_data['old_password'] == $requested_data['new_password']) {
+                return $this->sendError('New and old password must be different.');
+            }
 
-            // $data = [
-            //     'new_password' => $new_password,
-            //     'subject' => 'Reset Password',
-            //     'email' => $email
-            // ];
+            $this->UserObj->saveUpdateUser([
+                'update_id' => $response->id,
+                'password' => $requested_data['new_password']
+            ]);
 
-            $admin['id'] = 1;
-            $admin['detail'] = true;
-            $admin_data = $this->UserObj->getUser($admin);
-            return $this->sendResponse([], 'Your password has been updated.');
+            saveEmailLog([
+                'user_id' => $response->id,
+                'email_template_id' => 2, //email changed password
+                'new_password' => $requested_data['new_password']
+            ]);
+            
+            return $this->sendResponse([], 'Your password has been changed successfully.');
         }
     }
+
+
+    // public function changePassword(Request $request)
+    // {
+    //     $params = $request->all();
+    //     $rules = array(
+    //         'email'             => 'required|email:rfc,dns|email',
+    //         'old_password'      => 'required',
+    //         // 'new_password'      => 'required|min:4',
+    //         'new_password'      => [
+    //             'required', Password::min(8)
+    //                 // ->letters()
+    //                 // ->mixedCase()
+    //                 // ->numbers()
+    //                 // ->symbols()
+    //                 // ->uncompromised()
+    //         ],
+    //         'confirm_password'  => 'required|required_with:new_password|same:new_password'
+    //     );
+    //     $validator = \Validator::make($request->all(), $rules);
+
+    //     if ($validator->fails()) {
+    //         return $this->sendError($validator->errors()->first(), ["error" => $validator->errors()->first()]);
+    //     }
+
+    //     $response = $this->authorizeUser([
+    //         'email' => $params['email'],
+    //         'password' => $params['old_password'],
+    //         'mode' => 'only_validate',
+    //     ]);
+
+    //     if ($params['old_password'] == $params['new_password']) {
+    //         $error_message['error'] = 'New and old password must be different.';
+    //         return $this->sendError($error_message['error'], $error_message);
+    //     }
+
+    //     if (!$response) {
+    //         $error_message['error'] = 'Your old password is incorrect.';
+    //         return $this->sendError($error_message['error'], $error_message);
+    //     } else {
+    //         $new_password = $params['confirm_password'];
+    //         $email = $request->get('email');
+    //         $password = Hash::make($new_password);
+
+    //         \DB::update('update users set password = ? where email = ?', [$password, $email]);
+
+    //         // $data = [
+    //         //     'new_password' => $new_password,
+    //         //     'subject' => 'Reset Password',
+    //         //     'email' => $email
+    //         // ];
+
+    //         $admin['id'] = 1;
+    //         $admin['detail'] = true;
+    //         $admin_data = $this->UserObj->getUser($admin);
+    //         return $this->sendResponse([], 'Your password has been updated.');
+    //     }
+    // }
 
     public function logoutUser(Request $request)
     {

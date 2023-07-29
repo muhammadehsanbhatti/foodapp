@@ -110,13 +110,13 @@ class UserSeeder extends Seeder
 
                     $role = Role::where('name','admin')->first();
                     $user = User::where('id', 2)->first();
-                    $permissions = Permission::whereIn('id',[1,2,3,4,23,24,25,26,27,28,29,30])->pluck('id','id')->all();
+                    $permissions = Permission::whereIn('id',[1,2,3,4])->pluck('id','id')->all();
                     $role->syncPermissions($permissions);
                     $user->assignRole([$role->id]);
 
                     $role = Role::where('name','user')->first();
                     $user = User::where('id', 3)->first();
-                    $permissions = Permission::whereIn('id',[23,24,25,26,27,28,29,30,31])->pluck('id','id')->all();
+                    $permissions = Permission::whereIn('id',[31])->pluck('id','id')->all();
                     $role->syncPermissions($permissions);
                     $user->assignRole([$role->id]);
 

@@ -17,292 +17,84 @@ use Carbon\Carbon;
 
 class RegisterController extends Controller
 {
+    public function user_address(Request $request)
+    {
+        $requested_data = array();
+        $posted_data = $request->all();
 
-//Test User
-//     // List of general titles 
-//     public function general_titles(Request $request){
+        $rules = array(
+            'user_id'  => 'exists:users,id',
+            'country' => 'required',
+            'city' => 'required',
+            'address_type' => 'required',
+            'address' => 'required',
+        );
+        $validator = \Validator::make($request->all(), $rules);
 
-//         $posted_data = array();
-//         $posted_data['title_status'] = $request->title_status;
-//         if (isset($request->title)) {
-//             $posted_data['title'] = $request->title;
-//         }
-//         $posted_data['status'] = 'Published';
-//         if (isset($request->title_status) && $request->title_status == 4) {
-//             $user_industry_vertical_items = $this->UserindustryVerticalItemObj->getUserIndustyVerticalItem([
-//                 'user_id' => \Auth::user()->id,
-//                 'intrested_vertical' => 'Industry',
-//                 'groupBy' => 'user_industy_vertical_items.general_title_id',
-                
-//             ]);
-//             $general_title_id = $user_industry_vertical_items->ToArray();
-//             $general_title_id = array_column($general_title_id, 'general_title_id');
-//             $posted_data['general_title_id_in'] = $general_title_id;
-//             $data = $this->IndustryVerticalItemObj->getIndustryVerticalItem($posted_data);
-//         }
-//         else{
-//             $data = $this->GeneralObj->getGeneralTitle($posted_data);
-//         }
-//         return $this->sendResponse($data, 'List of general titles');
-//     }
-//     // Add of general titles 
-//     public function create_general_title(Request $request){
-//         $requestd_data = array();
-//         $requestd_data = $request->all();
-//         $rules = array(
-//             'title' => 'required|unique:general_titles,title|regex:/^[a-zA-Z ]+$/u',
-//             'title_status' => 'required|integer|between:1,6',
-//         );
-
-//         $validator = \Validator::make($request->all(), $rules);
-
-//         if ($validator->fails()) {
-//             return $this->sendError(["error" => $validator->errors()->first()]);
-//         }
+        if ($validator->fails()) {
+            return $this->sendError($validator->errors()->first(), ["error" => $validator->errors()->first()]);
+        }
         
-//         if (isset($requestd_data['title_status']) && $requestd_data['title_status'] == 4) {
-//             $user_industry_vertical_items = $this->UserindustryVerticalItemObj->getUserIndustyVerticalItem([
-//                 'user_id' => \Auth::user()->id,
-//                 'intrested_vertical' => 'Industry',
-//                 'groupBy' => 'user_industy_vertical_items.general_title_id',
-                
-//             ]);
-//             $general_title_id = $user_industry_vertical_items->ToArray();
-//             $general_title_id = array_column($general_title_id, 'general_title_id');
-
-//             if(isset($general_title_id) && count($general_title_id)>0){
-//                 foreach ($general_title_id as $key => $id) {
-//                     // echo '<pre>'; print_r($id); echo '</pre>'; exit;
-//                     $general_title[] = $this->IndustryVerticalItemObj->saveUpdateIndustryVerticalItem([
-//                         'title' => $requestd_data['title'],
-//                         'general_title_id' => $id
-//                     ]);
-//                 }
-//             }
-//         }else{
-//             $general_title = $this->GeneralObj->saveUpdateGeneralTitle([
-//                 'title' => $requestd_data['title'],
-//                 'title_status' => $requestd_data['title_status']
-//             ]);
-//         }
-
-//         return $this->sendResponse($general_title, 'General title added successfully');
-//     }
-
-//      // list of goals
-//      public function goals(Request $request){
-
-//         $posted_data = array();
-//         $posted_data['goal_number'] = $request->goal_number;
-//         $goals = $this->GoalObj->getGoal($posted_data);
-//         return $this->sendResponse($goals, 'List of goals');
-//     }
-
-//     // List of institute name
-//     public function educational_info(Request $request){
-//         $education_information = $this->UserEducationalInfoObj::where('university_school_name', 'like', '%' . $request['institute_name'] . '%')->groupBy('university_school_name')->pluck('university_school_name');
-//         // $education_information = $this->UserEducationalInfoObj->getUserEducationalInformation($posted_data);
-//         return $this->sendResponse($education_information, 'List of institue name');
-//     }
-
-//     // List of Degrees name
-//     public function degree_info(Request $request){
-//         $education_information = $this->UserEducationalInfoObj::where('degree_discipline', 'like', '%' . $request['degree_name'] . '%')->groupBy('degree_discipline')->pluck('degree_discipline');
-//         return $this->sendResponse($education_information, 'List of Degree name');
-//     }
-
-//     public function contact_user_list(Request $request){
-//         $posted_data = array();
-//         $request_data = $request->all();
-//         $posted_data['except_auth_id'] = \Auth::user()->id;
-//         if (isset($request_data['name'])) {
-//             $posted_data['name'] = $request_data['name'];
-//         }
-//         if (isset($request_data['phone_numbers'])) {
-//             $posted_data['phone_numbers_in'] = $request_data['phone_numbers'];
-//         }
-//         $posted_data['except_auth_id'] = \Auth::user()->id;
-//         $return_ary['matched_connect_peoples'] = $this->UserObj->getUser($posted_data);
-        
-//         $matched_phone_number = $return_ary['matched_connect_peoples']->ToArray();
-//         $matched_phone_number = array_column($matched_phone_number, 'phone_number');
-
-//         $return_ary['not_matched_connect_peoples'] = array();
-//         if(isset($request_data['phone_numbers'])){
-//         $a1 = $matched_phone_number;
-//         $a2 = $request_data['phone_numbers'];
-//         $return_ary['not_matched_connect_peoples'] = array_merge(array_diff($a1, $a2),array_diff($a2,$a1));
-//         }
-// //echo '<pre>';
-// //print_r($matched_phone_number);
-// //print_r($request_data['phone_numbers']);
-// //print_r($return_ary['not_matched_connect_peoples']);
-// //echo '</pre>';
-        
-// //        $not_match_record = $this->UserObj->getUser([
-// //           'phone_numbers_not_in'=>$matched_phone_number
-// //        ]);
-        
-// //       $not_matched_phone_number = $not_match_record->ToArray();
-// //        $return_ary['not_matched_connect_peoples'] = array_column($not_matched_phone_number, 'phone_number');
-//         return $this->sendResponse($return_ary, 'List of users');
-//     }
-
-//     // list of connect people And Filters
-//     public function connect_people_list(Request $request){
-//         $posted_data = array();
-//         $request_data = $request->all();
-//         $posted_data['paginate'] = 10;
-//         $posted_data['user_id'] = \Auth::user()->id;
-//         $posted_data['status'] = 'Accept';
-
-//         // status filter
-//         if(isset($request_data['status'])){
-//             $posted_data['status'] = $request_data['status'];
-//         }
-
-//         // connect_type filter
-//         if(isset($request_data['connect_type'])){
-//             $posted_data['connect_type'] = $request_data['connect_type'];
-//         }
-
-//         if($request_data){
-//             $posted_data = array_merge($posted_data,$request_data);
-//         }
-        
-//         $connect_peoples = $this->ConnectPeopleObj->getConnectPeople($posted_data);
-        
-//         $latestConnectUserId = $connect_peoples->ToArray();
-//         $latestConnectUserId = array_column($latestConnectUserId['data'], 'connect_user_id');
-
-//         // Professional role filter
-//         if(isset($request_data['professional_role'])){
-//             $professional_role_type_items = $this->UserProRolteItemObj->getUserProRoleTypeItem([
-//                 'general_title_ids' => $request_data['professional_role'],
-//                 'user_ids' => $latestConnectUserId
-//             ]);
+        $requested_data['user_id'] = \Auth::user()->id;
+        foreach ($posted_data['country'] as $key => $value) {
+            $requested_data['country'] = $value;
+            $requested_data['city'] = $posted_data['city'][$key];
+            $requested_data['address_type'] = $posted_data['address_type'][$key];
+            $requested_data['address'] = $posted_data['address'][$key];
             
-//             $latestConnectUserId = $professional_role_type_items->ToArray();
-//             $latestConnectUserId = array_column($latestConnectUserId, 'user_id');
-//         }
+            $data[] = $this->UserAddressObj->saveUpdateUserAddress($requested_data);
+        }
+        return $this->sendResponse($data, 'User Address added Successfully');
+    }
 
-//         // Industry experties filter
-//         if(isset($request_data['industry_experties'])){
-//             $industries_experties = $this->UserindustryVerticalItemObj->getUserIndustyVerticalItem([
-//                 'general_title_ids' => $request_data['industry_experties'],
-//                 'user_ids' => $latestConnectUserId
-//             ]);
-            
-//             $latestConnectUserId = $industries_experties->ToArray();
-//             $latestConnectUserId = array_column($latestConnectUserId, 'user_id');
-//         }
-
-//         // Career status position filter
-//         if(isset($request_data['career_status_position'])){
-//             $career_status_position = $this->UserCareerStatusObj->getUserCareerStatusPosition([
-//                 'general_title_ids' => $request_data['career_status_position'],
-//                 'user_ids' => $latestConnectUserId
-//             ]);
-//             $latestConnectUserId = $career_status_position->ToArray();
-//             $latestConnectUserId = array_column($latestConnectUserId, 'user_id');
-
-//         }
-        
-//         // Age range filter filter
-//         if(isset($request_data['age_from']) && isset($request_data['age_to'])){
-//             $user_record = $this->UserObj->getUser([
-//                 'user_ids' => $latestConnectUserId,
-//                 'age_from'=> $request_data['age_from'],
-//                 'age_to'=> $request_data['age_to'],
-//             ]);
-            
-//             $latestConnectUserId = $user_record->ToArray();
-//             $latestConnectUserId = array_column($latestConnectUserId, 'id');
-//         }
-
-//         // Gender filter
-//         if(isset($request_data['gender'])){
-//             $user_record = $this->UserObj->getUser([
-//                 'gender' => $request_data['gender'],
-//                 'user_ids' => $latestConnectUserId
-//             ]);
-
-//             $latestConnectUserId = $user_record->ToArray();
-//             $latestConnectUserId = array_column($latestConnectUserId, 'id');
-//         }
-
-//         $connect_peoples = $this->UserObj->getUser([
-//             'user_ids' => $latestConnectUserId
-//         ]);
-
-//         return $this->sendResponse($connect_peoples, 'User connect list');
+    public function update_user_address(Request $request,$id){
+        {
+            $posted_data = $request->all();
+            $posted_data['update_id'] =  $id;
+            $rules = array(
+                'user_id'  => 'exists:users,id',
+                'country' => 'required',
+                'city' => 'required',
+                'address_type' => 'required',
+                'address' => 'required',
+            );
+            $validator = \Validator::make($request->all(), $rules);
     
-//     }
+            if ($validator->fails()) {
+                return $this->sendError($validator->errors()->first(), ["error" => $validator->errors()->first()]);
+            }
+            $get_data = $this->UserAddressObj->getUserAddress([
+                'user_id' => \Auth::user()->id,
+                'id' => $id,
+                'detail' => true
+            ]);
+            if ($get_data) {
+                $posted_data['user_id'] = \Auth::user()->id;
+                $data = $this->UserAddressObj->saveUpdateUserAddress($posted_data);
+                return $this->sendResponse($data, 'User Address updated Successfully');
+            }
+            else{
+                return $this->sendError(["error" => "Something went wrong"]);
+            }
+        }
+    }
 
-
-//     // Post connects peoples
-//     public function connects_people(Request $request){
-//         if (\Auth::check()) {
-
-//             $rules = array(
-//                 'connect_user_id' => 'required|exists:users,id'
-//             );
+    public function delete_user_address($id)
+    {
+        $get_data = $this->UserAddressObj->getUserAddress([
+            'user_id' => \Auth::user()->id,
+            'id' => $id,
+            'detail' => true
+        ]);
+        if ($get_data) {
+            $this->UserAddressObj->deleteUserAddress($id);
+            return $this->sendResponse('Success', 'Your Address deleted successfully');
+        }
+        else{
+            return $this->sendResponse('error', 'Something went wrong');
+        }
+    }
     
-//             $validator = \Validator::make($request->all(), $rules);
-    
-//             if ($validator->fails()) {
-//                 return $this->sendError(["error" => $validator->errors()->first()]);
-//             }
-
-//             $requestd_data = array();
-//             $requestd_data['user_id'] = \Auth::user()->id;
-//             $requestd_data['connect_user_id'] =  $request->connect_user_id;
-//             $requestd_data['status'] = 'Pending';
-//             $requestd_data['connect_type'] =  'phonebook';
-
-//             $this->ConnectPeopleObj->saveUpdateConnectPeople($requestd_data);
-//             return $this->sendResponse('Success', 'User connected');
-//         }
-//         else{
-//             return $this->sendError('Something went wrong');
-//         }
-//     }
-
-//     // Update connects peoples
-//     public function update_connects_people(Request $request, $id){
-        
-//         $update_data = $request->all();
-//         $update_data['update_id'] = $id;
-
-//         $rules = array(
-//             'update_id' => 'exists:connect_people,id'
-//         );
-
-//         $validator = \Validator::make($update_data, $rules);
-//         if ($validator->fails()) {
-//             return $this->sendError(["error" => $validator->errors()->first()]);
-//         }
-
-//         $connect_people = $this->ConnectPeopleObj->getConnectPeople([
-//             'id' => $id,
-//             'detail' => true
-//         ]);
-//         if ($connect_people) {
-//             if ($update_data['status'] == 'Accept') {
-                
-//                 $this->ConnectPeopleObj->saveUpdateConnectPeople([
-//                     'user_id' => $connect_people->connect_user_id,
-//                     'connect_user_id' => \Auth::user()->id,
-//                     'status' => 'Accept',
-//                     'connect_type' => 'phonebook'
-//                 ]);  
-//             }
-//         }
-        
-//         $this->ConnectPeopleObj->saveUpdateConnectPeople($update_data);
-//         return $this->sendResponse('Success', 'User connection updated');
-//     }
-
 
     public function login_user(Request $request)
     {

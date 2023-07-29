@@ -20,6 +20,7 @@ class CreateUserAddressesTable extends Migration
             $table->string('country')->nullable();
             $table->string('city')->nullable();
             $table->enum('address_type', ['Work', 'Home','Other'])->nullable();
+            $table->longText('address')->nullable();
             $table->timestamps();
         });
     }

@@ -26,6 +26,10 @@ use App\Models\RestaurantMenue;
 use App\Models\RestaurantFile;
 use App\Models\MenueVariant;
 use App\Models\BusinessCuisine;
+use App\Models\About;
+use App\Models\PrivacyPolicy;
+use App\Models\TermsCondition;
+use App\Models\UserAddress;
 
 
 use DB;
@@ -57,6 +61,10 @@ class Controller extends BaseController
     public $RestaurantFileObj;
     public $MenueVariantsObj;
     public $BusinessCuisineObj;
+    public $AboutObj;
+    public $PrivacyPolicyObj;
+    public $TermsConditionObj;
+    public $UserAddressObj;
 
     public function __construct() {
         
@@ -77,7 +85,11 @@ class Controller extends BaseController
         $this->RestaurantFileObj = new RestaurantFile();
         $this->MenueVariantsObj = new MenueVariant();
         $this->BusinessCuisineObj = new BusinessCuisine();
-
+        $this->AboutObj = new About();
+        $this->PrivacyPolicyObj = new PrivacyPolicy();
+        $this->TermsConditionObj = new TermsCondition();
+        $this->UserAddressObj = new UserAddress();
+        
     }
 
     /**

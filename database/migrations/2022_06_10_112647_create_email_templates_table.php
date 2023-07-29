@@ -17,7 +17,7 @@ class CreateEmailTemplatesTable extends Migration
             $table->id();
             $table->string('subject')->nullable();
             $table->longText('message')->nullable();
-            $table->enum('send_on', ['Register', 'Reset Password']);
+            $table->enum('send_on', ['Account Register', 'Changed Password', 'Email Verification Through Code', 'Email Verification Through Link', 'Forgot Password', 'OTP Verification']);
             $table->softDeletes();
             $table->timestamps();
         });

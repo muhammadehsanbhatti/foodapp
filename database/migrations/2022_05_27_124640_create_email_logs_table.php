@@ -17,9 +17,11 @@ class CreateEmailLogsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
+            $table->unsignedBigInteger('email_template_id')->nullable();
+            $table->foreign('email_template_id')->references('id')->on('email_templates')->onUpdate('cascade')->onDelete('cascade');
             $table->string('email', 100)->nullable();
-            $table->text('email_message')->nullable();
-            $table->string('email_subject', 100)->nullable();
+            $table->longText('email_message')->nullable();
+            $table->longText('email_subject')->nullable();
             $table->enum('email_status', ['Pending', 'Send', 'Stop'])->default('Pending');
             $table->timestamp('send_at')->nullable();
             $table->timestamp('stop_at')->nullable();

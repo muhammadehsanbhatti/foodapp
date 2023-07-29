@@ -235,6 +235,85 @@ if (! function_exists('time_elapsed_string')) {
     }
 }
 
+if (! function_exists('saveEmailLog')) {
+    function saveEmailLog($posted_data = array()) {
+
+
+        $emailTemplateObj = new \App\Models\EmailTemplate;
+        $shortCodesObj = new \App\Models\ShortCode;
+        $emailLogObj = new \App\Models\EmailLogs;
+        $userObj = new \App\Models\User;
+        $emailTemplateDetail = $emailTemplateObj->getEmailTemplates(['id' => $posted_data['email_template_id']]);
+        $userDetail = $userObj->getUser(['id' => $posted_data['user_id']]);
+        if($emailTemplateDetail){
+            $email_subject = $emailTemplateDetail->subject;
+            $email_body = $emailTemplateDetail->message;
+
+
+            if (isset($posted_data['new_password'])) {
+                $search = '[new_password]';
+                $replace = $posted_data['new_password'];
+                $email_subject = stripcslashes(str_replace($search, $replace, $email_subject));
+                $email_body = stripcslashes(str_replace($search, $replace, $email_body));
+            }
+            if (isset($posted_data['otp_code'])) {
+                $search = '[otp_code]';
+                $replace = $posted_data['otp_code'];
+                $email_subject = stripcslashes(str_replace($search, $replace, $email_subject));
+                $email_body = stripcslashes(str_replace($search, $replace, $email_body));
+            }
+
+    
+            $all_codes = $shortCodesObj->getEmailShortCode();
+
+            foreach ($all_codes as $key => $code ) {
+                $ss_search = $code['title'];
+
+                if ($code['title'] == '[user_name]') {
+                    $ss_replace = $userDetail ? ucwords($userDetail->first_name.' '.$userDetail->last_name) : $ss_search;
+                }
+                else if ($code['title'] == '[login_url]') {
+                    $redirect_url = url('sp-login');
+                    $ss_replace = ucwords('<a class="text-primary" href="'.$redirect_url.'">'.$redirect_url.'</a>');
+                }
+                else if ($code['title'] == '[app_name]') {
+                    $ss_replace = config('app.name');
+                }
+                else if ($code['title'] == '[email_verification_code]') {
+                    $ss_replace = $userDetail ? $userDetail->email_verification_code : $ss_search;
+                }
+                else if ($code['title'] == '[email_verification_link]') {
+                    $redirect_url = url('verify-email').'/'.$userDetail->verification_token;
+                    $ss_replace = ucwords('<a class="text-primary" style="border-color: #7367F0 !important; background-color: #7367F0 !important; color: #fff !important; text-decoration: none; font-size: 16px; padding: 10px 15px; border-radius: 20px; text-transform: uppercase;" href="'.$redirect_url.'">Click here to Verify</a>');
+                }
+                
+                if(isset($ss_search) && isset($ss_replace)){
+                    $email_subject = stripcslashes(str_replace($ss_search, $ss_replace, $email_subject));
+                    $email_body = stripcslashes(str_replace($ss_search, $ss_replace, $email_body));
+                }
+                
+            }
+
+            if($userDetail){
+                $emailLogObj->saveUpdateEmailLogs([
+                    'user_id' => $userDetail->id,
+                    'email' => $userDetail->email,
+                    'email_message' => $email_body,
+                    'email_subject' => $email_subject,
+                    'email_template_id' => $posted_data['email_template_id'],
+                    'send_email_after' => isset($posted_data['send_email_after'])? $posted_data['send_email_after'] : 'Daily'
+                ]);
+            }
+
+            // return $response = [
+            //     'email_subject' => $email_subject,
+            //     'email_body' => $email_body
+            // ];
+        }
+    }
+}
+
+
 if (! function_exists('decodeShortCodesTemplate')) {
         function decodeShortCodesTemplate($posted_data = array()) {
         

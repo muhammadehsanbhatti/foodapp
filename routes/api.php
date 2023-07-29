@@ -28,6 +28,7 @@ use App\Http\Controllers\Api\RestaurantController;
 Route::post('login', [RegisterController::class, 'login_user']);
 Route::post('register', [RegisterController::class, 'register_user']);
 Route::post('forgot_password', [RegisterController::class, 'forgotPassword']);
+Route::post('verify_otp', [RegisterController::class, 'verifyOtp']);
 Route::post('change_password', [RegisterController::class, 'changePassword']);
 Route::post('logout', [RegisterController::class, 'logoutUser']);
 Route::get('verify-email/{token?}', [RegisterController::class, 'verifyUserEmail'])->name('email_verify');

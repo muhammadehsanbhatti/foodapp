@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\RestaurantController;
 use App\Http\Controllers\Api\PrivacyPolicyController;
 use App\Http\Controllers\Api\AboutController;
 use App\Http\Controllers\Api\TermsConditionController;
+use App\Http\Controllers\Api\AddToCartController;
 
 /*
 |--------------------------------------------------------------------------
@@ -37,19 +38,22 @@ Route::post('logout', [RegisterController::class, 'logoutUser']);
 Route::get('verify-email/{token?}', [RegisterController::class, 'verifyUserEmail'])->name('email_verify');
 
 
-Route::get('restaurant_list', [RestaurantController::class, 'index']); 
 Route::get('cuisine_list', [RestaurantController::class, 'get_cuisine_list']); 
 Route::get('restaurant_menue_list', [RestaurantMenueController::class, 'index']); 
 
+Route::get('restaurant_list', [RestaurantController::class, 'index']); 
 Route::get('about', [AboutController::class, 'index']); 
 Route::get('privacy_policy', [PrivacyPolicyController::class, 'index']); 
 Route::get('terms_condition', [TermsConditionController::class, 'index']); 
 
-Route::post('add_cart', [RestaurantMenueController::class, 'add_to_cart']); 
 
 
 Route::middleware('auth:api')->group( function () {
-	
+
+	// Add to cart
+	Route::post('add_cart/{id}', [AddToCartController::class, 'update']);
+	Route::resource('add_cart', AddToCartController::class);
+
 	Route::post('cuisine_store', [RestaurantController::class, 'cuisine_store']); 
 	Route::post('cuisine_update/{id}', [RestaurantController::class, 'cuisine_update']); 
 	Route::post('restaurant/{id}', [RestaurantController::class, 'update']); 

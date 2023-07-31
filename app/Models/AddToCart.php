@@ -8,9 +8,17 @@ use Illuminate\Database\Eloquent\Model;
 class AddToCart extends Model
 {
     use HasFactory;
+    public function restaurantMenue()
+    {
+        return $this->belongsTo(RestaurantMenue::class, 'restaurant_menue_id')
+                            ->with('restaurantFile')
+                            ->with('restaurantMenueVariant');
+    }
     public static function getAddToCart($posted_data = array())
     {
-        $query = AddToCart::latest();
+        $query = AddToCart::latest()
+                        ->with('restaurantMenue')
+        ;
 
         if (isset($posted_data['id'])) {
             $query = $query->where('add_to_carts.id', $posted_data['id']);

@@ -30,6 +30,7 @@ use App\Models\About;
 use App\Models\PrivacyPolicy;
 use App\Models\TermsCondition;
 use App\Models\UserAddress;
+use App\Models\AddToCart;
 
 
 use DB;
@@ -65,6 +66,7 @@ class Controller extends BaseController
     public $PrivacyPolicyObj;
     public $TermsConditionObj;
     public $UserAddressObj;
+    public $AddToCartObj;
 
     public function __construct() {
         
@@ -89,6 +91,7 @@ class Controller extends BaseController
         $this->PrivacyPolicyObj = new PrivacyPolicy();
         $this->TermsConditionObj = new TermsCondition();
         $this->UserAddressObj = new UserAddress();
+        $this->AddToCartObj = new AddToCart();
         
     }
 

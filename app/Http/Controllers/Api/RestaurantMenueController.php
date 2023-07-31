@@ -32,9 +32,6 @@ class RestaurantMenueController extends Controller
     {
         
         $request_data = $request->all(); 
-
-        
-        
         $validator = \Validator::make($request_data, [
             'restaurant_menue_id'    => 'required|exists:restaurant_menues,id',
             'quantity'        => 'required',
@@ -43,18 +40,18 @@ class RestaurantMenueController extends Controller
         if($validator->fails()){
             return $this->sendError('Please fill all the required fields.', ["error"=>$validator->errors()->first()]);   
         }
+        echo '<pre>'; print_r(\Auth::user()->id); echo '</pre>'; exit;
 
-        if (Auth::check()) {
+        if (\Auth::check()) {
             $request_data['user_id'] = \Auth::user()->id;
         }
         else{
-            
-            $request_data['user_id'] = \Auth::user()->id;
+            $request_data['session_id'] =  \Session::get('id');
         }
         
-        $restaurant_menue = $this->RestaurantMenueObj->saveUpdateRestaurantMenue($request_data);
+        $addToCartData = $this->AddToCartObj->saveUpdateAddToCart($request_data);
         
-        return $this->sendResponse($restaurant_menue, 'Restaurant menue added successfully.');
+        return $this->sendResponse($addToCartData, 'Add to cart added successfully.');
     }
 
     /**

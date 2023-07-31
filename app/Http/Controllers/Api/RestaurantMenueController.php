@@ -27,6 +27,36 @@ class RestaurantMenueController extends Controller
         //
     }
 
+
+    public function add_to_cart(Request $request)
+    {
+        
+        $request_data = $request->all(); 
+
+        
+        
+        $validator = \Validator::make($request_data, [
+            'restaurant_menue_id'    => 'required|exists:restaurant_menues,id',
+            'quantity'        => 'required',
+        ]);
+   
+        if($validator->fails()){
+            return $this->sendError('Please fill all the required fields.', ["error"=>$validator->errors()->first()]);   
+        }
+
+        if (Auth::check()) {
+            $request_data['user_id'] = \Auth::user()->id;
+        }
+        else{
+            
+            $request_data['user_id'] = \Auth::user()->id;
+        }
+        
+        $restaurant_menue = $this->RestaurantMenueObj->saveUpdateRestaurantMenue($request_data);
+        
+        return $this->sendResponse($restaurant_menue, 'Restaurant menue added successfully.');
+    }
+
     /**
      * Store a newly created resource in storage.
      *

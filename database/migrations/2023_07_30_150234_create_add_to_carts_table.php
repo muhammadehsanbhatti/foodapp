@@ -20,6 +20,7 @@ class CreateAddToCartsTable extends Migration
             $table->unsignedBigInteger('restaurant_menue_id')->nullable();
             $table->foreign('restaurant_menue_id')->references('id')->on('restaurant_menues')->onUpdate('cascade')->onDelete('cascade');
             $table->string('session_id')->nullable();
+            $table->integer('quantity')->nullable();
 
             $table->timestamps();
         });

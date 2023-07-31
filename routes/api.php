@@ -45,6 +45,8 @@ Route::get('about', [AboutController::class, 'index']);
 Route::get('privacy_policy', [PrivacyPolicyController::class, 'index']); 
 Route::get('terms_condition', [TermsConditionController::class, 'index']); 
 
+Route::post('add_cart', [RestaurantMenueController::class, 'add_to_cart']); 
+
 
 Route::middleware('auth:api')->group( function () {
 	

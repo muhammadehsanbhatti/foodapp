@@ -35,6 +35,7 @@ class AddToCartController extends Controller
      */
     public function store(Request $request)
     {
+        $posted_data =array();
         $request_data = $request->all(); 
         $validator = \Validator::make($request_data, [
             'restaurant_menue_id'    => 'required|exists:restaurant_menues,id',
@@ -46,14 +47,18 @@ class AddToCartController extends Controller
         }
         
         if (\Auth::check()) {
-            $request_data['user_id'] = \Auth::user()->id;
+            $posted_data['user_id'] = \Auth::user()->id;
         }
         else{
-            $request_data['session_id'] =\Request::getClientIp(true);
+            $posted_data['session_id'] =\Request::getClientIp(true);
         }
-    
-        $addToCartData = $this->AddToCartObj->saveUpdateAddToCart($request_data);
-        
+        if (isset($request_data['restaurant_menue_id'])) {
+            foreach ($request_data['restaurant_menue_id'] as $restaurant_menue_key => $restaurant_menue_value) {
+                $posted_data['restaurant_menue_id'] = $restaurant_menue_value;
+                $posted_data['quantity'] = $request_data['quantity'][$restaurant_menue_key];
+                $addToCartData[] = $this->AddToCartObj->saveUpdateAddToCart($posted_data);
+            }
+        }
         return $this->sendResponse($addToCartData, 'Add to cart added successfully.');
     }
 

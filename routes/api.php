@@ -11,6 +11,8 @@ use App\Http\Controllers\Api\PrivacyPolicyController;
 use App\Http\Controllers\Api\AboutController;
 use App\Http\Controllers\Api\TermsConditionController;
 use App\Http\Controllers\Api\AddToCartController;
+use App\Http\Controllers\Api\PaymentController;
+
 
 /*
 |--------------------------------------------------------------------------
@@ -51,6 +53,7 @@ Route::get('terms_condition', [TermsConditionController::class, 'index']);
 Route::middleware('auth:api')->group( function () {
 
 	// Add to cart
+	Route::post('/payment/process', [StripePaymentController::class, 'processPayment']);
 	Route::post('add_cart/{id}', [AddToCartController::class, 'update']);
 	Route::resource('add_cart', AddToCartController::class);
 

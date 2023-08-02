@@ -25,7 +25,7 @@
         "qlick/laravel-full-calendar": "^1.1",
         "rahulhaque/laravel-filepond": "^1.6",
         "spatie/laravel-permission": "^5.5",
-        "stripe/stripe-php": "^7.114",
+        "stripe/stripe-php": "^10.19",
         "tymon/jwt-auth": "^1.0"
     },
     "require-dev": {

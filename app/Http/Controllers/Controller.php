@@ -31,6 +31,7 @@ use App\Models\PrivacyPolicy;
 use App\Models\TermsCondition;
 use App\Models\UserAddress;
 use App\Models\AddToCart;
+use App\Models\Payment;
 
 
 use DB;
@@ -67,6 +68,7 @@ class Controller extends BaseController
     public $TermsConditionObj;
     public $UserAddressObj;
     public $AddToCartObj;
+    public $PaymentObj;
 
     public function __construct() {
         
@@ -92,6 +94,7 @@ class Controller extends BaseController
         $this->TermsConditionObj = new TermsCondition();
         $this->UserAddressObj = new UserAddress();
         $this->AddToCartObj = new AddToCart();
+        $this->PaymentObj = new Payment();
         
     }
 

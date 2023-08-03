@@ -35,6 +35,9 @@ class AddToCart extends Model
         if (isset($posted_data['quantity'])) {
             $query = $query->where('add_to_carts.quantity', $posted_data['quantity']);
         }
+        if (isset($posted_data['user_checkout_id'])) {
+            $query = $query->where('add_to_carts.user_checkout_id', $posted_data['user_checkout_id']);
+        }
         $query->select('add_to_carts.*');
         
         $query->getQuery()->orders = null;
@@ -76,7 +79,6 @@ class AddToCart extends Model
             $data = new AddToCart;
         }
 
-
         if (isset($posted_data['user_id'])) {
             $data->user_id = $posted_data['user_id'];
         }
@@ -89,7 +91,9 @@ class AddToCart extends Model
         if (isset($posted_data['quantity'])) {
             $data->quantity = $posted_data['quantity'];
         }
-
+        if (isset($posted_data['user_checkout_id'])) {
+            $data->user_checkout_id = $posted_data['user_checkout_id'];
+        }
         $data->save();
         
         $data = AddToCart::getAddToCart([

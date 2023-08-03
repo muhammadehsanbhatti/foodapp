@@ -48,6 +48,7 @@ class AddToCartController extends Controller
         
         if (\Auth::check()) {
             $posted_data['user_id'] = \Auth::user()->id;
+            $posted_data['user_checkout_id'] = \Auth::user()->id;
         }
         else{
             $posted_data['session_id'] =\Request::getClientIp(true);
@@ -107,6 +108,8 @@ class AddToCartController extends Controller
         
         if (\Auth::check()) {
             $request_data['user_id'] = \Auth::user()->id;
+            $request_data['user_checkout_id'] = \Auth::user()->id;
+            
         }
         else{
             $request_data['session_id'] =\Request::getClientIp(true);

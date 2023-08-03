@@ -53,7 +53,7 @@ Route::get('terms_condition', [TermsConditionController::class, 'index']);
 Route::middleware('auth:api')->group( function () {
 
 	// Add to cart
-	Route::post('/stripe_pament', [StripePaymentController::class, 'processPayment']);
+	Route::post('/stripe_pament', [PaymentController::class, 'processPayment']);
 	Route::post('add_cart/{id}', [AddToCartController::class, 'update']);
 	Route::resource('add_cart', AddToCartController::class);
 

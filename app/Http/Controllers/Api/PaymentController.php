@@ -22,29 +22,32 @@ class PaymentController extends Controller
     public function processPayment(Request $request)
     {
         try {
-            // Set Stripe API key
-            // Stripe::setApiKey(config('services.stripe.secret'));
-            Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
-
-
-            // Retrieve payment token from the request
-            $paymentToken = $request->input('payment_token');
-
-            // Create a payment intent
-            $paymentIntent = \Stripe\PaymentIntent::create([
-                'amount' => 1000, // Amount in cents (e.g., $10.00)
-                'currency' => 'usd',
-                'payment_method_types' => ['card'],
-                'payment_method' => $paymentToken,
-                'confirm' => true,
+            $stripe = new \Stripe\StripeClient(
+                env('STRIPE_SECRET')
+            );
+            $res = $stripe->tokens->create([
+              'card' => [
+                'number' => $request->card_number,
+                'exp_month' =>  $request->exp_month,
+                'exp_year' => $request->exp_year,
+                'cvc' => $request->cvc,
+              ],
             ]);
+           Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
 
-            return response()->json([
-                'success' => true,
-                'client_secret' => $paymentIntent->client_secret,
+            $response = $stripe->charges->create([
+            'amount' => $request->amount,
+            'currency' => 'usd',
+            'source' => $res->id,
+            'description' => $request->description,
             ]);
+            return $this->sendResponse($response->status, 'Thansk, Your transaction completed successfully.');
+
+
         } catch (\Exception $e) {
-            return response()->json(['error' => $e->getMessage()], 500);
+            return $this->sendError($e, ["error" => $e->getMessage()]);
+
+            // return response()->json(['error' => $e->getMessage()], 500);
         }
     }
     

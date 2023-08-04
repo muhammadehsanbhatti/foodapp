@@ -4,12 +4,26 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use BinaryCats\Sku\HasSku;
+use BinaryCats\Sku\Concerns\SkuOptions;
 
 class Payment extends Model
 {
     use HasFactory;
+  	use HasSku;
 
     
+    public function skuOptions() : SkuOptions
+    {
+        return SkuOptions::make()
+            ->from(['label', 'customer_name'])
+            ->target('sku')
+            ->using('_')
+            ->forceUnique(false)
+            ->generateOnCreate(true)
+            ->refreshOnUpdate(false);
+    }
+
     public static function getPayment($posted_data = array())
     {
         $query = Payment::latest();
@@ -121,9 +135,6 @@ class Payment extends Model
         }
         if (isset($posted_data['payment_status'])) {
             $data->payment_status = $posted_data['payment_status'];
-        }
-        if (isset($posted_data['payment_sku'])) {
-            $data->payment_sku = $posted_data['payment_sku'];
         }
 
         $data->save();

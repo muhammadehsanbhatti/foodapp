@@ -85,17 +85,19 @@ class PaymentController extends Controller
                 'description' => $request->description,
                 ]);
 
-                $payment_data = $this->PaymentObj->saveUpdatePayment([
-                    'user_id' => \Auth::user()->id,
-                    'restaurant_menue_id' => $request->address_id,
-                    'customer_name' => \Auth::user()->first_name. \Auth::user()->last_name,
-                    'menue_name' => $request->address_id,
-                    'amount_captured' => $total_price,
-                    'currency' => $request->currency,
-                    'item_delivered_quantity' => $request->address_id,
-                    'payment_status' => $request->address_id,
-                    'payment_sku' => $request->address_id,
-                ]);
+                foreach($add_cart_data as $add_cart_key => $add_cart_value){
+                    $payment_data = $this->PaymentObj->saveUpdatePayment([
+                        'user_id' => \Auth::user()->id,
+                        'restaurant_menue_id' => $request->address_id,
+                        'customer_name' => \Auth::user()->first_name. \Auth::user()->last_name,
+                        // 'menue_name' => $request->address_id,
+                        'amount_captured' => $total_price,
+                        'currency' => $request->currency,
+                        'item_delivered_quantity' => $request->address_id,
+                        'payment_status' => 'Stripe',
+                    ]);
+                }
+               
 
 
                 return $this->sendResponse($response->status, 'Thansk, Your transaction completed successfully.');

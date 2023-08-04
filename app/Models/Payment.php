@@ -26,6 +26,9 @@ class Payment extends Model
         if (isset($posted_data['restaurant_menue_id'])) {
             $query = $query->where('payments.restaurant_menue_id', $posted_data['restaurant_menue_id']);
         }
+        if (isset($posted_data['user_address_id'])) {
+            $query = $query->where('payments.user_address_id', $posted_data['user_address_id']);
+        }
         if (isset($posted_data['customer_name'])) {
             $query = $query->where('payments.customer_name', $posted_data['customer_name']);
         }
@@ -97,6 +100,9 @@ class Payment extends Model
         }
         if (isset($posted_data['restaurant_menue_id'])) {
             $data->restaurant_menue_id = $posted_data['restaurant_menue_id'];
+        }
+        if (isset($posted_data['user_address_id'])) {
+            $data->user_address_id = $posted_data['user_address_id'];
         }
         if (isset($posted_data['customer_name'])) {
             $data->customer_name = $posted_data['customer_name'];

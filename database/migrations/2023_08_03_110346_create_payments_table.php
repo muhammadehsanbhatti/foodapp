@@ -21,6 +21,8 @@ class CreatePaymentsTable extends Migration
             $table->foreign('restaurant_id')->references('id')->on('businesses')->onUpdate('cascade')->onDelete('cascade');
             $table->unsignedBigInteger('restaurant_menue_id');
             $table->foreign('restaurant_menue_id')->references('id')->on('restaurant_menues')->onUpdate('cascade')->onDelete('cascade');
+            $table->unsignedBigInteger('user_address_id');
+            $table->foreign('user_address_id')->references('id')->on('user_addresses')->onUpdate('cascade')->onDelete('cascade');
             $table->string('customer_name')->nullable();
             $table->string('menue_name')->nullable();
             $table->string('amount_captured')->nullable();

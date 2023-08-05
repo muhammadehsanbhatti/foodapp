@@ -27,12 +27,12 @@ class PaymentController extends Controller
             $requested_data = $request->all();
             
             $rules = array(
-                'user_checkout_id' => 'required|exists:add_to_carts,user_checkout_id',
                 'user_id' => 'exists:add_to_carts,user_id',
-                'address_id' => 'exists:user_addresses,user_id',
+                'address_id' => 'required|exists:user_addresses,id',
                 'card_number' => 'required',
                 'exp_month' => 'required|max:250',
                 'exp_year' => 'required|max:250',
+                'restaurant_id' => 'required|exists:restaurant_menues,restaurant_id',
                 'cvc' => 'required|max:250',
             );
            
@@ -41,23 +41,24 @@ class PaymentController extends Controller
             if ($validator->fails()) {
                 return $this->sendError($validator->errors()->first(), ["error" => $validator->errors()->first()]);
             }
-            $posted_data['user_checkout_id'] = $request->user_checkout_id;
 
             $add_cart_data = $this->AddToCartObj->getAddToCart([
-                'user_checkout_id' => $request->user_checkout_id
+                'user_checkout_id' => \Auth::user()->id,
             ]);
             
             $get_restaurant_menue_id = $add_cart_data->ToArray();
-            $get_restaurant_menue_id = array_column($get_restaurant_menue_id, 'restaurant_menue_id');
             $return_data = array();
             $total_price = 0;
+            $total_quantity =0;
             foreach ($get_restaurant_menue_id as $get_restaurant_menue_key => $get_restaurant_menue_value) {
                 $get_restaurant_menue = $this->RestaurantMenueObj->getRestaurantMenue([
-                    'id' => $get_restaurant_menue_value,
+                    'id' => $get_restaurant_menue_value['restaurant_menue_id'],
+                    'restaurant_id' => $request->restaurant_id,
                     'detail' => true
                 ]);
                 $total_price += (int)$get_restaurant_menue['sale_price'];
-                $return_data[] =$get_restaurant_menue;
+                $total_quantity += $get_restaurant_menue_value['quantity'];
+                $return_data[] = $get_restaurant_menue;
             }
             $get_user_address = $this->UserAddressObj->getUserAddress([
                 'user_id' => \Auth::user()->id,
@@ -84,22 +85,22 @@ class PaymentController extends Controller
                 'source' => $res->id,
                 'description' => $request->description,
                 ]);
+                
+                $posted_data = array();
+                $posted_data['user_id'] = \Auth::user()->id;
+                $posted_data['user_address_id'] = $get_user_address->id;
+                $posted_data['restaurant_id'] = $request->restaurant_id;
+                $posted_data['customer_name'] = \Auth::user()->first_name. \Auth::user()->last_name;
+                $posted_data['currency'] = $request->currency;
+                $posted_data['amount_captured'] = $total_price;
+                $posted_data['item_delivered_quantity'] = $total_quantity;
+                $posted_data['payment_status'] = 'Stripe';
+                $data = $this->PaymentHistroyObj->saveUpdatePaymentHistroy($posted_data);
+                // if ($data) {
+                //     $this->AddToCartObj->deleteAddToCart(\Auth::user()->id);
+                // }
 
-                foreach($add_cart_data as $add_cart_key => $add_cart_value){
-                    $payment_data = $this->PaymentObj->saveUpdatePayment([
-                        'user_id' => \Auth::user()->id,
-                        'restaurant_menue_id' => $request->address_id,
-                        'customer_name' => \Auth::user()->first_name. \Auth::user()->last_name,
-                        // 'menue_name' => $request->address_id,
-                        'amount_captured' => $total_price,
-                        'currency' => $request->currency,
-                        'item_delivered_quantity' => $request->address_id,
-                        'payment_status' => 'Stripe',
-                    ]);
-                }
-               
-
-
+                // return $this->sendResponse("DFsdf", 'Thansk, Your transaction completed successfully.');
                 return $this->sendResponse($response->status, 'Thansk, Your transaction completed successfully.');
             }
             else{

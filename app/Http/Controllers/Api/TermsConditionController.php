@@ -12,9 +12,12 @@ class TermsConditionController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     {
-        //
+        $request_data = $request->all();
+       
+        $data = $this->TermsConditionObj->getTermsCondition($request_data);
+        return $this->sendResponse($data, 'Success');
     }
 
     /**
@@ -35,7 +38,18 @@ class TermsConditionController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request_data = $request->all(); 
+
+        $validator = \Validator::make($request_data, [
+            'message'    => 'required||regex:/^[a-zA-Z0-9 ]+$/u',
+        ]);
+   
+        if($validator->fails()){
+            return $this->sendError('Please fill all the required fields.', ["error"=>$validator->errors()->first()]);   
+        }
+
+        $data = $this->TermsConditionObj->saveUpdateTermsCondition($request_data);
+        return $this->sendResponse($data, 'Terms and conditions added successfully.');
     }
 
     /**
@@ -69,7 +83,23 @@ class TermsConditionController extends Controller
      */
     public function update(Request $request, $id)
     {
-        //
+        $requested_data = array();
+        $requested_data = $request->all();
+        $requested_data['update_id'] = $id;
+        
+        $rules = array(
+            'message'    => 'required||regex:/^[a-zA-Z0-9 ]+$/u',
+        );
+       
+        $validator = \Validator::make($requested_data, $rules);
+
+        if ($validator->fails()) {
+            return $this->sendError($validator->errors()->first(), ["error" => $validator->errors()->first()]);
+        }
+
+        
+        $data = $this->TermsConditionObj->saveUpdateTermsCondition($requested_data);
+        return $this->sendResponse($data, 'Privacy policy updated successfully.');
     }
 
     /**
@@ -80,6 +110,7 @@ class TermsConditionController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $this->TermsConditionObj->deleteTermsCondition($id);
+        return $this->sendResponse('Success', 'Terms and confition deleted successfully');
     }
 }

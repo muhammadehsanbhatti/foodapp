@@ -87,7 +87,6 @@ class AboutController extends Controller
      */
     public function update(Request $request, $id)
     {
-        echo '<pre>'; print_r("dfsd"); echo '</pre>'; exit;
         $requested_data = array();
         $requested_data = $request->all();
         $requested_data['update_id'] = $id;
@@ -116,6 +115,7 @@ class AboutController extends Controller
      */
     public function destroy($id)
     {
-        //
+        $this->AboutObj->deleteAbout($id);
+        return $this->sendResponse('Success', 'About us deleted successfully');
     }
 }

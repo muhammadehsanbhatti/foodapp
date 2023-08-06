@@ -57,24 +57,35 @@ Route::middleware('auth:api')->group( function () {
 	Route::post('add_cart/{id}', [AddToCartController::class, 'update']);
 	Route::resource('add_cart', AddToCartController::class);
 
+	// Cuisine
 	Route::post('cuisine_store', [RestaurantController::class, 'cuisine_store']); 
 	Route::post('cuisine_update/{id}', [RestaurantController::class, 'cuisine_update']); 
 	Route::post('restaurant/{id}', [RestaurantController::class, 'update']); 
 	Route::resource('restaurant', RestaurantController::class);
 	
-	Route::post('editprofile', [RegisterController::class, 'edit_profile']);
 	
 	// User Address
 	Route::post('user_address', [RegisterController::class, 'user_address']); 
 	Route::post('update_user_address/{id}', [RegisterController::class, 'update_user_address']); 
 	Route::delete('delete_user_address/{id}', [RegisterController::class, 'delete_user_address']); 
+	Route::post('editprofile', [RegisterController::class, 'edit_profile']);
 
+	// Restaurant Menue
+	Route::resource('restaurant_menue', RestaurantMenueController::class);
 	Route::post('restaurant_menue/{id}', [RestaurantMenueController::class, 'update']);
 	Route::post('required_menue_varients', [RestaurantMenueController::class, 'required_menue_varients_store']); 
 	Route::post('optional_menue_varients', [RestaurantMenueController::class, 'optional_menue_varients_store']); 
 
-	Route::resource('restaurant_menue', RestaurantMenueController::class);
+	// About
 	Route::resource('about', AboutController::class);
+	Route::post('about/{id}', [AboutController::class, 'update']);
+	
+	// Privacy Policy
 	Route::resource('privacy_policy', PrivacyPolicyController::class);
+	Route::post('privacy_policy/{id}', [PrivacyPolicyController::class, 'update']);
+
+	// Terms and Conditions
 	Route::resource('terms_condition', TermsConditionController::class);
+	Route::post('terms_condition/{id}',  [TermsConditionController::class, 'update']);
+
 });

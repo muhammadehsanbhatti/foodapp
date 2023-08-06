@@ -113,10 +113,10 @@ class AddToCart extends Model
             $data = AddToCart::latest();
         }
 
-        if(isset($where_posted_data) && count($where_posted_data)>0){
-            if (isset($where_posted_data['restaurant_menue_id'])) {
+        if(isset($where_posted_data) && count($where_posted_data)>0){         
+            if (isset($where_posted_data['user_id'])) {
                 $is_deleted = true;
-                $data = $data->where('restaurant_menue_id', $where_posted_data['restaurant_menue_id']);
+                $data = $data->where('user_id', $where_posted_data['user_id']);
             }
         }
         

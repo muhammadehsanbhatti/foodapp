@@ -96,11 +96,9 @@ class PaymentController extends Controller
                 $posted_data['item_delivered_quantity'] = $total_quantity;
                 $posted_data['payment_status'] = 'Stripe';
                 $data = $this->PaymentHistroyObj->saveUpdatePaymentHistroy($posted_data);
-                // if ($data) {
-                //     $this->AddToCartObj->deleteAddToCart(\Auth::user()->id);
-                // }
-
-                // return $this->sendResponse("DFsdf", 'Thansk, Your transaction completed successfully.');
+                if ($data) {
+                    $this->AddToCartObj->deleteAddToCart(0,['user_id' => \Auth::user()->id]);
+                }
                 return $this->sendResponse($response->status, 'Thansk, Your transaction completed successfully.');
             }
             else{

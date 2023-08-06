@@ -129,6 +129,10 @@ class User extends Authenticatable
         if (isset($posted_data['last_name'])) {
             $query = $query->where('users.last_name', 'like', '%' . $posted_data['last_name'] . '%');
         }
+        if (isset($posted_data['email_verification_code'])) {
+            $query = $query->where('users.email_verification_code', $posted_data['email_verification_code']);
+        }
+        
         if (isset($posted_data['roles'])) {
             $query = $query->whereHas("roles", function($qry) use ($posted_data) {
                         $qry->where("name", $posted_data['roles']);
@@ -253,6 +257,9 @@ class User extends Authenticatable
         }
         if (isset($posted_data['register_from'])) {
             $data->register_from = $posted_data['register_from'];
+        }
+        if (isset($posted_data['email_verification_code'])) {
+            $data->email_verification_code = $posted_data['email_verification_code'];
         }
         if (isset($posted_data['last_seen'])) {
             $data->last_seen = $posted_data['last_seen'];

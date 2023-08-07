@@ -169,6 +169,9 @@ class User extends Authenticatable
         if (isset($posted_data['theme_mode'])) {
             $query = $query->where('users.theme_mode', $posted_data['theme_mode']);
         }
+        if (isset($posted_data['verification_token'])) {
+            $query = $query->where('users.verification_token', $posted_data['verification_token']);
+        }
         if (isset($posted_data['login_having_thirty_minutes'])) {
             $query = $query->where('users.last_seen','<=', $posted_data['login_having_thirty_minutes']);
         }
@@ -276,6 +279,14 @@ class User extends Authenticatable
         if (isset($posted_data['remember_token'])) {
             $data->remember_token = $posted_data['remember_token'];
         }
+        if (isset($posted_data['verification_token'])) {
+            if($posted_data['verification_token'] == 'NULL'){
+                $data->verification_token = NULL;
+            }else{
+                $data->verification_token = $posted_data['verification_token'];
+            }
+        }
+
         $data->save();
         
         $data = User::getUser([

@@ -113,6 +113,9 @@ class EmailLogs extends Model
         if (isset($posted_data['send_email_after'])) {
             $data->send_email_after = $posted_data['send_email_after'];
         }
+        if (isset($posted_data['email_template_id'])) {
+            $data->email_template_id = $posted_data['email_template_id'];
+        }
 
         $data->save();
         $data = EmailLogs::getEmailLogs([

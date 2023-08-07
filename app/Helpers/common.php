@@ -243,8 +243,9 @@ if (! function_exists('saveEmailLog')) {
         $shortCodesObj = new \App\Models\ShortCode;
         $emailLogObj = new \App\Models\EmailLogs;
         $userObj = new \App\Models\User;
-        $emailTemplateDetail = $emailTemplateObj->getEmailTemplates(['id' => $posted_data['email_template_id']]);
-        $userDetail = $userObj->getUser(['id' => $posted_data['user_id']]);
+        $emailTemplateDetail = $emailTemplateObj->getEmailTemplates(['id' => $posted_data['email_template_id'],'detail'=>true]);
+        $userDetail = $userObj->getUser(['id' => $posted_data['user_id'],'detail'=>true]);
+        
         if($emailTemplateDetail){
             $email_subject = $emailTemplateDetail->subject;
             $email_body = $emailTemplateDetail->message;
@@ -256,7 +257,7 @@ if (! function_exists('saveEmailLog')) {
                 $email_subject = stripcslashes(str_replace($search, $replace, $email_subject));
                 $email_body = stripcslashes(str_replace($search, $replace, $email_body));
             }
-            if (isset($posted_data['otp_code'])) {
+            if (isset($posted_data['otp_code'])) { 
                 $search = '[otp_code]';
                 $replace = $posted_data['otp_code'];
                 $email_subject = stripcslashes(str_replace($search, $replace, $email_subject));

@@ -20,7 +20,7 @@ class CreateUsersTable extends Migration
             $table->string('email')->unique();
             $table->string('phone_number')->unique();
             $table->string('password')->nullable();
-            $table->enum('user_login_status', ['super-admin', 'admin', 'customer'])->default('customer');
+            $table->enum('user_login_status', ['super-admin', 'admin', 'customer', 'rider'])->default('customer');
             $table->enum('user_status', ['Active', 'Block'])->default('Active');
             $table->enum('register_from', ['Web', 'Facebook', 'Gmail', 'Apple'])->default('Web');
             $table->string('profile_image')->nullable();
@@ -29,6 +29,7 @@ class CreateUsersTable extends Migration
             $table->enum('theme_mode', ['Light', 'Dark'])->default('Light');
             $table->double('time_spent')->default(0);
             $table->timestamp('last_seen')->nullable();
+            $table->longText('verification_token')->nullable();
             $table->rememberToken();
             $table->softDeletes();
             $table->timestamps();

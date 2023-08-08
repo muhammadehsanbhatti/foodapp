@@ -14,10 +14,15 @@ class AddToCart extends Model
                             ->with('restaurantFile')
                             ->with('restaurantMenueVariant');
     }
+    public function userVariants()
+    {
+        return $this->hasMany(UserCartMenueVariants::class, 'add_to_cart_id');
+    }
     public static function getAddToCart($posted_data = array())
     {
         $query = AddToCart::latest()
                         ->with('restaurantMenue')
+                        ->with('userVariants')
         ;
 
         if (isset($posted_data['id'])) {

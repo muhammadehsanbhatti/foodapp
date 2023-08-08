@@ -33,6 +33,7 @@ use App\Models\UserAddress;
 use App\Models\AddToCart;
 use App\Models\Payment;
 use App\Models\PaymentHistroy;
+use App\Models\UserCartMenueVariants;
 
 
 
@@ -72,6 +73,7 @@ class Controller extends BaseController
     public $AddToCartObj;
     public $PaymentObj;
     public $PaymentHistroyObj;
+    public $UserCartMenueVariantsObj;
 
     public function __construct() {
         
@@ -99,6 +101,7 @@ class Controller extends BaseController
         $this->AddToCartObj = new AddToCart();
         $this->PaymentObj = new Payment();
         $this->PaymentHistroyObj = new PaymentHistroy();
+        $this->UserCartMenueVariantsObj = new UserCartMenueVariants();
         
     }
 

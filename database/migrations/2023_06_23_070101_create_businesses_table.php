@@ -23,7 +23,7 @@ class CreateBusinessesTable extends Migration
             $table->string('business_description',15)->nullable();
             $table->bigInteger('starting_price')->nullable();
             $table->string('ordr_delivery_time')->nullable();
-            $table->enum('business_type', ['None', 'Corporation'])->default('None');
+            $table->enum('business_type', ['Home Kitchen', 'Restaurant'])->default('Restaurant');
             $table->enum('cuisine_type', ['None', 'Indian cuisine'])->default('None');
             $table->softDeletes();
             $table->timestamps();

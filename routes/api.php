@@ -41,7 +41,7 @@ Route::get('verify-email/{token?}', [RegisterController::class, 'verifyUserEmail
 
 
 Route::get('cuisine_list', [RestaurantController::class, 'get_cuisine_list']); 
-Route::get('restaurant_menue_list', [RestaurantMenueController::class, 'index']); 
+Route::get('restaurant_menue/{id}', [RestaurantMenueController::class, 'edit']); 
 
 Route::get('restaurant_list', [RestaurantController::class, 'index']); 
 Route::get('about', [AboutController::class, 'index']); 

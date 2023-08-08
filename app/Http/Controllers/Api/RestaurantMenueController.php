@@ -136,7 +136,10 @@ class RestaurantMenueController extends Controller
      */
     public function edit($id)
     {
-        //
+        $posted_data = array();
+        $request_data['id'] = $id;
+        $data = $this->RestaurantMenueObj->getRestaurantMenue($posted_data);
+        return $this->sendResponse($data, 'Success');
     }
 
     /**

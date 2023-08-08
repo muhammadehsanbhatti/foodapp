@@ -8,9 +8,15 @@ use Illuminate\Database\Eloquent\Model;
 class UserCartMenueVariants extends Model
 {
     use HasFactory;
+    // public function userVariants()
+    // {
+    //     return $this->belongsTo(AddToCart::class, 'add_to_cart_id');
+    // }
     public static function getUserCartMenueVariants($posted_data = array())
     {
-        $query = UserCartMenueVariants::latest();
+        $query = UserCartMenueVariants::latest()
+                                    // ->with('userVariants')
+        ;
 
         if (isset($posted_data['id'])) {
             $query = $query->where('user_cart_menue_variants.id', $posted_data['id']);

@@ -11,16 +11,21 @@ class MenueVariant extends Model
     use HasFactory;
     use SoftDeletes;
 
-    
+    // public function restaurantVariants()
+    // {
+    //     return $this->belongsTo(RestaurantMenue::class, 'restaurant_menue_id');
+    // }
     public static function getMenueVariant($posted_data = array())
     {
-        $query = MenueVariant::latest();
+        $query = MenueVariant::latest()
+                        // ->with('restaurantVariants')
+        ;
 
         if (isset($posted_data['id'])) {
             $query = $query->where('menue_variants.id', $posted_data['id']);
         }
-        if (isset($posted_data['restauran_menue_id'])) {
-            $query = $query->where('menue_variants.restauran_menue_id', $posted_data['restauran_menue_id']);
+        if (isset($posted_data['restaurant_menue_id'])) {
+            $query = $query->where('menue_variants.restaurant_menue_id', $posted_data['restaurant_menue_id']);
         }
         if (isset($posted_data['variant_name'])) {
             $query = $query->where('menue_variants.variant_name', $posted_data['variant_name']);
@@ -79,8 +84,8 @@ class MenueVariant extends Model
             $data = new MenueVariant;
         }
 
-        if (isset($posted_data['restauran_menue_id'])) {
-            $data->restauran_menue_id = $posted_data['restauran_menue_id'];
+        if (isset($posted_data['restaurant_menue_id'])) {
+            $data->restaurant_menue_id = $posted_data['restaurant_menue_id'];
         }
         if (isset($posted_data['variant_name'])) {
             $data->variant_name = $posted_data['variant_name'];

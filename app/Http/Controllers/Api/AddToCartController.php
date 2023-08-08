@@ -39,6 +39,7 @@ class AddToCartController extends Controller
         $request_data = $request->all(); 
         $validator = \Validator::make($request_data, [
             'restaurant_menue_id'    => 'required|exists:restaurant_menues,id',
+            'menue_varient_id' => 'exists:menue_variants,id',
             'quantity'        => 'required',
         ]);
    
@@ -53,10 +54,11 @@ class AddToCartController extends Controller
         else{
             $posted_data['session_id'] =\Request::getClientIp(true);
         }
-        if (isset($request_data['restaurant_menue_id'])) {
-            foreach ($request_data['restaurant_menue_id'] as $restaurant_menue_key => $restaurant_menue_value) {
-                $posted_data['restaurant_menue_id'] = $restaurant_menue_value;
-                $posted_data['quantity'] = $request_data['quantity'][$restaurant_menue_key];
+        $posted_data['restaurant_menue_id'] = $request->restaurant_menue_id;
+        $posted_data['quantity'] = $request->quantity;
+        if (isset($request_data['menue_varient_id'])) {
+            foreach ($request_data['menue_varient_id'] as $restaurant_menue_varient_key => $restaurant_menue_varient_value) {
+                $posted_data['menue_varient_id'] = $restaurant_menue_varient_value;
                 $addToCartData[] = $this->AddToCartObj->saveUpdateAddToCart($posted_data);
             }
         }

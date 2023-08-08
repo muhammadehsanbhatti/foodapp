@@ -73,7 +73,7 @@ class RestaurantMenueController extends Controller
                 }
                 if (isset($request_data['required_menue_type'])) {
                     $posted_data = array();
-                    $posted_data['restauran_menue_id']=  $restaurant_menue->id;
+                    $posted_data['restaurant_menue_id']=  $restaurant_menue->id;
                     $posted_data['menue_type']= $request_data['required_menue_type'];
                     $posted_data['variant_type'] = $request_data['required_variant_type'];
                     foreach ($request_data['required_variant_name'] as $variant_key => $variant_value) {
@@ -85,7 +85,7 @@ class RestaurantMenueController extends Controller
                 }
                 if (isset($request_data['optional_menue_type'])) {
                     $requestdata = array();
-                    $requestdata['restauran_menue_id']=  $restaurant_menue->id;
+                    $requestdata['restaurant_menue_id']=  $restaurant_menue->id;
                     $requestdata['menue_type']= $request_data['optional_menue_type'];
                     $requestdata['variant_type'] = $request_data['optional_variant_type'];
 
@@ -226,7 +226,7 @@ class RestaurantMenueController extends Controller
         $base_url = public_path();
         $rules = array(
         
-            'restauran_menue_id'    => 'required|exists:restaurant_menues,id',
+            'restaurant_menue_id'    => 'required|exists:restaurant_menues,id',
             'menue_type'        => 'required',
             'variant_type'      => 'required',
             'variant_name'    => 'required',
@@ -238,7 +238,7 @@ class RestaurantMenueController extends Controller
             return $this->sendError($validator->errors()->first(), ["error" => $validator->errors()->first()]);
         }
         $posted_data = array();
-        $posted_data['restauran_menue_id']=  $requested_data['restauran_menue_id'];
+        $posted_data['restaurant_menue_id']=  $requested_data['restaurant_menue_id'];
         $posted_data['menue_type']= $requested_data['menue_type'];
         $posted_data['variant_type'] = $requested_data['variant_type'];
         foreach ($requested_data['variant_name'] as $variant_key => $variant_value) {
@@ -255,7 +255,7 @@ class RestaurantMenueController extends Controller
         $requested_data = $request->all();
         $rules = array(
         
-            'restauran_menue_id'    => 'required|exists:restaurant_menues,id',
+            'restaurant_menue_id'    => 'required|exists:restaurant_menues,id',
             'menue_type'        => 'required',
             'variant_type'      => 'required',
             'variant_name'    => 'required',
@@ -268,7 +268,7 @@ class RestaurantMenueController extends Controller
             return $this->sendError($validator->errors()->first(), ["error" => $validator->errors()->first()]);
         }
         $posted_data = array();
-        $posted_data['restauran_menue_id']=  $requested_data['restauran_menue_id'];
+        $posted_data['restaurant_menue_id']=  $requested_data['restaurant_menue_id'];
         $posted_data['menue_type']= $requested_data['menue_type'];
         $posted_data['variant_type'] = $requested_data['variant_type'];
 

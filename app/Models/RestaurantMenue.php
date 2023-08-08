@@ -20,7 +20,7 @@ class RestaurantMenue extends Model
     public function restaurantMenueVariant()
     {
         // return $this->hasMany(RestaurantFile::class,'restaurnat_menu_id');
-        return $this->hasMany(MenueVariant::class, 'restauran_menue_id');
+        return $this->hasMany(MenueVariant::class, 'restaurant_menue_id');
     }
     public function skuOptions() : SkuOptions
     {

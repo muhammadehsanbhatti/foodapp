@@ -162,7 +162,7 @@ class RegisterController extends Controller
                 'first_name' => 'required||regex:/^[a-zA-Z ]+$/u',
                 'last_name' => 'required||regex:/^[a-zA-Z ]+$/u',
                 'phone_number'  => 'required|unique:users,phone_number',
-                'email' => 'required|email:rfc,dns|unique:users,email',
+                'email' => 'required|email|unique:users,email',
                 'password' => 'required|min:6',
                 'confirm_password' => 'required|required_with:password|same:password'
             );

@@ -29,9 +29,6 @@ class AddToCart extends Model
         if (isset($posted_data['restaurant_menue_id'])) {
             $query = $query->where('add_to_carts.restaurant_menue_id', $posted_data['restaurant_menue_id']);
         }
-        if (isset($posted_data['menue_varient_id'])) {
-            $query = $query->where('add_to_carts.menue_varient_id', $posted_data['menue_varient_id']);
-        }
         if (isset($posted_data['session_id'])) {
             $query = $query->where('add_to_carts.session_id', $posted_data['session_id']);
         }
@@ -87,9 +84,6 @@ class AddToCart extends Model
         }
         if (isset($posted_data['restaurant_menue_id'])) {
             $data->restaurant_menue_id = $posted_data['restaurant_menue_id'];
-        }
-        if (isset($posted_data['menue_varient_id'])) {
-            $data->menue_varient_id = $posted_data['menue_varient_id'];
         }
         if (isset($posted_data['session_id'])) {
             $data->session_id = $posted_data['session_id'];

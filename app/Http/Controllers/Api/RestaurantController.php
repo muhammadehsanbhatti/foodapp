@@ -100,11 +100,12 @@ class RestaurantController extends Controller
          }
 
         $posted_data['cuisine_name'] = $requested_data['cuisine_name'];
+        $cuisine_data = $this->BusinessCuisineObj->getBusinessCuisine([
+            'id' => $id,
+            'detail' => true 
+        ]);
         if($request->file('cuisine_image')) {
-            $cuisine_data = $this->BusinessCuisineObj->getBusinessCuisine([
-                'id' => $id,
-                'detail' => true 
-            ]);
+           
             if(isset($cuisine_data)){
                     $base_url = public_path();
                     $url = $base_url.'/'.$cuisine_data->cuisine_image;
@@ -118,6 +119,9 @@ class RestaurantController extends Controller
             $filePath = $request->cuisine_image->storeAs('cuisine_image', $file_name, 'public');
             $filePath = 'storage/cuisine_image/' . $file_name;
             $posted_data['cuisine_image'] = $filePath;
+        }
+        else{
+            $posted_data['cuisine_image'] = $cuisine_data->cuisine_image;
         }
         
         $data= $this->BusinessCuisineObj->saveUpdateBusinessCuisine($posted_data);

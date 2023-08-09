@@ -130,12 +130,28 @@ class AddToCartController extends Controller
         $add_to_cart_data = $this->AddToCartObj->saveUpdateAddToCart($request_data);
 
         if (isset($request_data['menue_varient_id'])) {
-            foreach ($request_data['menue_varient_id'] as $restaurant_menue_varient_key => $restaurant_menue_varient_value) {
-                $cart_variants['menue_variant_id'] = $restaurant_menue_varient_value;
+            
+            $get_cart_variants = $this->UserCartMenueVariantsObj->getUserCartMenueVariants($request_data['menue_varient_id']);
+            // echo '<pre>'; print_r($get_cart_variants->ToArray()); echo '</pre>'; exit;
+
+            foreach ($get_cart_variants as $restaurant_menue_varient_key => $restaurant_menue_varient_value) {
+                
+                // $cart_variants = array();
+            // for ($i=0; $i < count($request_data['menue_varient_id']); $i++) {
+                $cart_variants['update_id'] = $restaurant_menue_varient_value['id'];
+                $cart_variants['menue_varient_id'] = $request_data['menue_varient_id'][$restaurant_menue_varient_key];
                 $cart_variants['add_to_cart_id'] = $add_to_cart_data->id;
                 $cart_variants['user_id'] = \Auth::user()->id;
-                $addToCartData[] = $this->UserCartMenueVariantsObj->saveUpdateUserCartMenueVariants($cart_variants);
+               
+                $this->UserCartMenueVariantsObj->saveUpdateUserCartMenueVariants($cart_variants);
             }
+
+            // foreach ($request_data['menue_varient_id'] as $restaurant_menue_varient_key => $restaurant_menue_varient_value) {
+            //     $cart_variants['menue_variant_id'] = $restaurant_menue_varient_value;
+            //     $cart_variants['add_to_cart_id'] = $add_to_cart_data->id;
+            //     $cart_variants['user_id'] = \Auth::user()->id;
+            //     $addToCartData[] = $this->UserCartMenueVariantsObj->saveUpdateUserCartMenueVariants($cart_variants);
+            // }
             $add_to_cart_data = $this->AddToCartObj->getAddToCart([
                 'detail'=>true,
                 'id'=>$add_to_cart_data->id,

@@ -37,7 +37,7 @@ class UserCartMenueVariants extends Model
         if (isset($posted_data['orderBy_name']) && isset($posted_data['orderBy_value'])) {
             $query->orderBy($posted_data['orderBy_name'], $posted_data['orderBy_value']);
         } else {
-            $query->orderBy('id', 'DESC');
+            $query->orderBy('id', 'ASC');
         }
 
         if (isset($posted_data['paginate'])) {

@@ -136,9 +136,15 @@ class RestaurantMenueController extends Controller
      */
     public function edit($id)
     {
-        $posted_data = array();
         $request_data['id'] = $id;
-        $data = $this->RestaurantMenueObj->getRestaurantMenue($posted_data);
+        $validator = \Validator::make($request_data, [
+            'id'    => 'exists:restaurant_menues,id',
+        ]);
+   
+        if($validator->fails()){
+            return $this->sendError($validator->errors()->first(), ["error"=>$validator->errors()->first()]);   
+        }
+        $data = $this->RestaurantMenueObj->getRestaurantMenue($request_data);
         return $this->sendResponse($data, 'Success');
     }
 

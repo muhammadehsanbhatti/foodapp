@@ -88,7 +88,7 @@ class User extends Authenticatable
   
     public function busines()
     {
-        return $this->hasOne(Business::class, 'user_id');
+        return $this->hasOne(Business::class, 'user_id')->with('cuisine');
     }
     
     public static function getUser($posted_data = array())

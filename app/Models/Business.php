@@ -15,11 +15,16 @@ class Business extends Model
     {
         return $this->hasMany(RestaurantMenue::class, 'restaurant_id')->with('restaurantMenueVariant')->with('restaurantFile');
     }
+    public function cuisine()
+    {
+        return $this->belongsTo(BusinessCuisine::class, 'cuisine_id');
+    }
     
     public static function getBusiness($posted_data = array())
     {
         $query = Business::latest()
-        ->with('restaurantMenue')
+                        ->with('restaurantMenue')
+                        ->with('cuisine')
         ;
         if (isset($posted_data['id'])) {
             $query = $query->where('businesses.id', $posted_data['id']);
@@ -37,7 +42,7 @@ class Business extends Model
             $query = $query->where('businesses.restaurant_address', $posted_data['restaurant_address']);
         }
         if (isset($posted_data['cuisine_type'])) {
-            $query = $query->where('businesses.cuisine_type', $posted_data['cuisine_type']);
+            $query = $query->where('businesses.cuisine_id', $posted_data['cuisine_type']);
         }
         if (isset($posted_data['business_image'])) {
             $query = $query->where('businesses.business_image', $posted_data['business_image']);
@@ -104,8 +109,8 @@ class Business extends Model
         if (isset($posted_data['restaurant_address'])) {
             $data->restaurant_address = $posted_data['restaurant_address'];
         }
-        if (isset($posted_data['cuisine_type'])) {
-            $data->cuisine_type = $posted_data['cuisine_type'];
+        if (isset($posted_data['cuisine_id'])) {
+            $data->cuisine_id = $posted_data['cuisine_id'];
         }
         if (isset($posted_data['business_image'])) {
             $data->business_image = $posted_data['business_image'];

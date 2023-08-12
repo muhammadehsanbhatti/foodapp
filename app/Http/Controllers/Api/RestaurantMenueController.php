@@ -79,6 +79,7 @@ class RestaurantMenueController extends Controller
                     foreach ($request_data['required_variant_name'] as $variant_key => $variant_value) {
                         $posted_data['variant_name']= $variant_value;
                         $posted_data['variant_price']= $request_data['required_variant_price'][$variant_key];
+                        $posted_data['variant_description']= $request_data['required_variant_description'][$variant_key];
                         $required_menue_variants[]=$this->MenueVariantsObj->saveUpdateMenueVariant($posted_data);
                     }
                     $restaurant_menue['required_menue_variants'] = $required_menue_variants;
@@ -92,6 +93,7 @@ class RestaurantMenueController extends Controller
                     foreach ($request_data['optional_variant_image'] as $variant_key => $variant_image_value) {
                         $requestdata['variant_name']=$request_data['optional_variant_name'][$variant_key];
                         $requestdata['variant_price']= $request_data['optional_variant_price'][$variant_key];
+                        $requestdata['variant_description']= $request_data['optional_variant_description'][$variant_key];
 
                         if($request->file('optional_variant_image')) {
                             $extension = $variant_image_value->getClientOriginalExtension();

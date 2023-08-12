@@ -20,8 +20,10 @@ class CreateMenueVariantsTable extends Migration
             $table->string('variant_name')->nullable();
             $table->string('variant_price')->nullable();
             $table->string('variant_image')->nullable();
+            $table->longText('variant_description')->nullable();
             $table->enum('menue_type', ['Deal', 'Simple','Special'])->default('Simple');
             $table->enum('variant_type', ['Required', 'Optional'])->nullable();
+            
             $table->softDeletes();
             $table->timestamps();
         });

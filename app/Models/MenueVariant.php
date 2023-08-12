@@ -42,6 +42,10 @@ class MenueVariant extends Model
         if (isset($posted_data['variant_type'])) {
             $query = $query->where('menue_variants.variant_type', $posted_data['variant_type']);
         }
+        if (isset($posted_data['variant_description'])) {
+            $query = $query->where('menue_variants.variant_description', $posted_data['variant_description']);
+        }
+        
 
         $query->select('menue_variants.*');
         
@@ -101,6 +105,9 @@ class MenueVariant extends Model
         }
         if (isset($posted_data['variant_type'])) {
             $data->variant_type = $posted_data['variant_type'];
+        }
+        if (isset($posted_data['variant_description'])) {
+            $data->variant_description = $posted_data['variant_description'];
         }
 
         $data->save();

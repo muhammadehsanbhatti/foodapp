@@ -245,7 +245,7 @@ class RestaurantController extends Controller
             'starting_price' => 'required',
             'ordr_delivery_time' => 'required',
             'business_type' => 'required',
-            'cuisine_type' => 'required',
+            'cuisine_id' => 'required|exists:business_cuisines,id',
         );
        
         $validator = \Validator::make($requested_data, $rules);

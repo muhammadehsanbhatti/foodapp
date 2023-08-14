@@ -16,6 +16,7 @@ class PrivacyPolicyController extends Controller
     {
         $request_data = $request->all();
        
+        $request_data['detail'] = true;
         $data = $this->PrivacyPolicyObj->getPrivacyPolicy($request_data);
         return $this->sendResponse($data, 'Success');
     }

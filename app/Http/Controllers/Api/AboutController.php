@@ -15,6 +15,7 @@ class AboutController extends Controller
     public function index(Request $request)
     {
         $request_data = $request->all();
+        $request_data['detail'] = true;
        
         $data = $this->AboutObj->getAbout($request_data);
         return $this->sendResponse($data, 'Success');

@@ -16,6 +16,7 @@ class TermsConditionController extends Controller
     {
         $request_data = $request->all();
        
+        $request_data['detail'] = true;
         $data = $this->TermsConditionObj->getTermsCondition($request_data);
         return $this->sendResponse($data, 'Success');
     }

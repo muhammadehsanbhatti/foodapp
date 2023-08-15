@@ -56,68 +56,69 @@ class PaymentController extends Controller
                     'detail' => true
                 ]);
 
-                $user_cart_variants = $this->UserCartMenueVariantsObj->getUserCartMenueVariants([
-                    'user_id' =>\Auth::user()->id,
-                    'add_to_cart_id' => $get_restaurant_menue_value['id'],
-                    'menue_variant_id' => $get_restaurant_menue_value['restaurant_menue_id'],
-                    'detail' => true
+                // $user_cart_variants = $this->UserCartMenueVariantsObj->getUserCartMenueVariants([
+                //     'user_id' =>\Auth::user()->id,
+                //     'add_to_cart_id' => $get_restaurant_menue_value['id'],
+                //     'menue_variant_id' => $get_restaurant_menue_value['restaurant_menue_id'],
+                //     'detail' => true
 
-                ]);
-                if ($user_cart_variants) {
-                    $user_variants_price = $this->MenueVariantsObj->getMenueVariant([
-                        'restaurant_menue_id' =>$get_restaurant_menue_value['restaurant_menue_id'],
-                        'detail' => true
+                // ]);
+                // if ($user_cart_variants) {
+                //     $user_variants_price = $this->MenueVariantsObj->getMenueVariant([
+                //         'restaurant_menue_id' =>$get_restaurant_menue_value['restaurant_menue_id'],
+                //         'detail' => true
                         
-                    ]);
-                    echo '<pre>'; print_r($user_variants_price->ToArray()); echo '</pre>'; 
-                    $user_variant_price = (int)$user_variants_price->variant_price;
-                    // echo '<pre>'; print_r($user_variant_price); echo '</pre>'; exit;
-                }
+                //     ]);
+                //     // echo '<pre>'; print_r($user_variants_price->ToArray()); echo '</pre>'; 
+                //     $user_variant_price = (int)$user_variants_price->variant_price;
+                //     // echo '<pre>'; print_r($user_variant_price); echo '</pre>'; exit;
+                // }
                 $total_price += (int)$get_restaurant_menue['sale_price'];
                 $total_quantity += $get_restaurant_menue_value['quantity'];
                 $return_data[] = $get_restaurant_menue;
             }
-                echo '<pre>'; print_r($total_price); echo '</pre>'; exit;
             $get_user_address = $this->UserAddressObj->getUserAddress([
                 'user_id' => \Auth::user()->id,
                 'id' => $request->address_id,
                 'detail' => true
             ]);
             if ($get_user_address) {
-            //     $stripe = new \Stripe\StripeClient(
-            //         env('STRIPE_SECRET')
-            //     );
-            //     $res = $stripe->tokens->create([
-            //       'card' => [
-            //         'number' => $request->card_number,
-            //         'exp_month' =>  $request->exp_month,
-            //         'exp_year' => $request->exp_year,
-            //         'cvc' => $request->cvc,
-            //       ],
-            //     ]);
-            //    Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
-    
-            //     $response = $stripe->charges->create([
-            //     'amount' =>  $total_price,
-            //     'currency' => $request->currency,
-            //     'source' => $res->id,
-            //     'description' => $request->description,
-            //     ]);
                 
-            //     $posted_data = array();
-            //     $posted_data['user_id'] = \Auth::user()->id;
-            //     $posted_data['user_address_id'] = $get_user_address->id;
-            //     $posted_data['restaurant_id'] = $request->restaurant_id;
-            //     $posted_data['customer_name'] = \Auth::user()->first_name. \Auth::user()->last_name;
-            //     $posted_data['currency'] = $request->currency;
-            //     $posted_data['amount_captured'] = $total_price;
-            //     $posted_data['item_delivered_quantity'] = $total_quantity;
-            //     $posted_data['payment_status'] = 'Stripe';
-            //     $data = $this->PaymentHistroyObj->saveUpdatePaymentHistroy($posted_data);
-            //     if ($data) {
-            //         $this->AddToCartObj->deleteAddToCart(0,['user_id' => \Auth::user()->id]);
-            //     }
-            //     return $this->sendResponse($response->status, 'Thansk, Your transaction completed successfully.');
+                $stripe = new \Stripe\StripeClient(
+                    env('STRIPE_SECRET')
+                );
+                
+                $res = $stripe->tokens->create([
+                  'card' => [
+                    'number' => $request->card_number,
+                    'exp_month' =>  $request->exp_month,
+                    'exp_year' => $request->exp_year,
+                    'cvc' => $request->cvc,
+                  ],
+                ]);
+               Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
+    
+                $response = $stripe->charges->create([
+                    'amount' =>  $total_price * $total_quantity,
+                    'currency' => $request->currency,
+                    'source' => $res->id,
+                    'description' => $request->description,
+                ]);
+                
+                $posted_data = array();
+                $posted_data['user_id'] = \Auth::user()->id;
+                $posted_data['user_address_id'] = $get_user_address->id;
+                $posted_data['restaurant_id'] = $request->restaurant_id;
+                $posted_data['customer_name'] = \Auth::user()->first_name. \Auth::user()->last_name;
+                $posted_data['currency'] = $request->currency;
+                $posted_data['amount_captured'] = $total_price * $total_quantity;
+                $posted_data['item_delivered_quantity'] = $total_quantity;
+                $posted_data['payment_status'] = 'Stripe';
+                $data = $this->PaymentHistroyObj->saveUpdatePaymentHistroy($posted_data);
+                if ($data) {
+                    $this->AddToCartObj->deleteAddToCart(0,['user_id' => \Auth::user()->id]);
+                }
+                return $this->sendResponse($response->status, 'Thansk, Your transaction completed successfully.');
             }
             else{
                 return $this->sendError("eror", "First you add address");

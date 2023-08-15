@@ -78,6 +78,15 @@ class RegisterController extends Controller
             }
         }
     }
+    public function useraddress(){
+        $get_data = $this->UserAddressObj->getUserAddress([
+            'user_id' => \Auth::user()->id,
+        ]);
+        if (!$get_data) {
+            return $this->sendError(["error" => "Please first add your address"]);
+        }
+        return $this->sendResponse($get_data, 'Your address');
+    }
 
     public function delete_user_address($id)
     {

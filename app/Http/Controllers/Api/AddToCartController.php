@@ -14,7 +14,10 @@ class AddToCartController extends Controller
      */
     public function index()
     {
-        //
+        $add_to_cart_data = $this->AddToCartObj->getAddToCart([
+            'user_checkout_id'=> \Auth::user()->id,
+        ]);
+        return $this->sendResponse($add_to_cart_data, 'Add to cart list successfully.');
     }
 
     /**

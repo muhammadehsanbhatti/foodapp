@@ -5,7 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 
-class TermsConditionController extends Controller
+class FavMenuController extends Controller
 {
     /**
      * Display a listing of the resource.
@@ -15,9 +15,10 @@ class TermsConditionController extends Controller
     public function index(Request $request)
     {
         $request_data = $request->all();
+        $request_data['user_id'] = \Auth::user()->id;
        
-        $request_data['detail'] = true;
-        $data = $this->TermsConditionObj->getTermsCondition($request_data);
+       
+        $data = $this->FavMenuObj->getFavMenu($request_data);
         return $this->sendResponse($data, 'Success');
     }
 
@@ -42,15 +43,21 @@ class TermsConditionController extends Controller
         $request_data = $request->all(); 
 
         $validator = \Validator::make($request_data, [
-            'message'    => 'required||regex:/^[a-zA-Z0-9 ]+$/u',
+            'restaurant_menue_id'    => 'required|exists:restaurant_menues,id',
         ]);
    
         if($validator->fails()){
             return $this->sendError('Please fill all the required fields.', ["error"=>$validator->errors()->first()]);   
         }
+        if (\Auth::user()) {
+            $request_data['user_id'] = \Auth::user()->id;
+        }
+        else{
+            $request_data['ip_address'] = \Request::ip();
+        }
 
-        $data = $this->TermsConditionObj->saveUpdateTermsCondition($request_data);
-        return $this->sendResponse($data, 'Terms and conditions added successfully.');
+        $data = $this->FavMenuObj->saveUpdateFavMenu($request_data);
+        return $this->sendResponse($data, 'Menu in Favourite list added successfully.');
     }
 
     /**
@@ -84,23 +91,19 @@ class TermsConditionController extends Controller
      */
     public function update(Request $request, $id)
     {
-        $requested_data = array();
-        $requested_data = $request->all();
-        $requested_data['update_id'] = $id;
-        
-        $rules = array(
-            'message'    => 'required||regex:/^[a-zA-Z0-9 ]+$/u',
-        );
-       
-        $validator = \Validator::make($requested_data, $rules);
+        $request_data = $request->all(); 
 
-        if ($validator->fails()) {
-            return $this->sendError($validator->errors()->first(), ["error" => $validator->errors()->first()]);
+        $validator = \Validator::make($request_data, [
+            'user_id' => 'exists:users,'.\Auth::user()->id,  
+            'restaurant_menue_id'    => 'exists:restaurant_menues,'.$id,
+        ]);
+   
+        if($validator->fails()){
+            return $this->sendError($validator->errors()->first(), ["error"=>$validator->errors()->first()]);   
         }
 
-        
-        $data = $this->TermsConditionObj->saveUpdateTermsCondition($requested_data);
-        return $this->sendResponse($data, 'Privacy policy updated successfully.');
+        $data = $this->FavMenuObj->deleteFavMenu(0,['id'=>$id,'user_id'=>\Auth::user()->id]);
+        return $this->sendResponse('success', 'Remove Favourite Menu list successfully.');
     }
 
     /**
@@ -111,7 +114,6 @@ class TermsConditionController extends Controller
      */
     public function destroy($id)
     {
-        $this->TermsConditionObj->deleteTermsCondition($id);
-        return $this->sendResponse('Success', 'Terms and confition deleted successfully');
+        //
     }
 }

@@ -5,39 +5,35 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class UserCartMenueVariants extends Model
+class FavMenu extends Model
 {
     use HasFactory;
-    // public function userVariants()
-    // {
-    //     return $this->belongsTo(AddToCart::class, 'add_to_cart_id');
-    // }
-    public static function getUserCartMenueVariants($posted_data = array())
-    {
-        $query = UserCartMenueVariants::latest()
-                                    // ->with('userVariants')
-        ;
 
+    public static function getFavMenu($posted_data = array())
+    {
+        $query = FavMenu::latest()
+        // ->with('restaurantMenueFile')
+        ;
         if (isset($posted_data['id'])) {
-            $query = $query->where('user_cart_menue_variants.id', $posted_data['id']);
+            $query = $query->where('fav_menus.id', $posted_data['id']);
         }
         if (isset($posted_data['user_id'])) {
-            $query = $query->where('user_cart_menue_variants.user_id', $posted_data['user_id']);
+            $query = $query->where('fav_menus.user_id', $posted_data['user_id']);
         }
-        if (isset($posted_data['add_to_cart_id'])) {
-            $query = $query->where('user_cart_menue_variants.add_to_cart_id', $posted_data['add_to_cart_id']);
+        if (isset($posted_data['restaurant_menue_id'])) {
+            $query = $query->where('fav_menus.restaurant_menue_id', $posted_data['restaurant_menue_id']);
         }
-        if (isset($posted_data['menue_variant_id'])) {
-            $query = $query->where('user_cart_menue_variants.menue_variant_id', $posted_data['menue_variant_id']);
+        if (isset($posted_data['ip_address'])) {
+            $query = $query->where('fav_menus.ip_address', $posted_data['ip_address']);
         }
         
-        $query->select('user_cart_menue_variants.*');
+        $query->select('fav_menus.*');
         
         $query->getQuery()->orders = null;
         if (isset($posted_data['orderBy_name']) && isset($posted_data['orderBy_value'])) {
             $query->orderBy($posted_data['orderBy_name'], $posted_data['orderBy_value']);
         } else {
-            $query->orderBy('id', 'ASC');
+            $query->orderBy('id', 'DESC');
         }
 
         if (isset($posted_data['paginate'])) {
@@ -63,48 +59,49 @@ class UserCartMenueVariants extends Model
     }
 
 
-
-    public function saveUpdateUserCartMenueVariants($posted_data = array(), $where_posted_data = array())
+    public function saveUpdateFavMenu($posted_data = array(), $where_posted_data = array())
     {
         if (isset($posted_data['update_id'])) {
-            $data = UserCartMenueVariants::find($posted_data['update_id']);
+            $data = FavMenu::find($posted_data['update_id']);
         } else {
-            $data = new UserCartMenueVariants;
+            $data = new FavMenu;
         }
 
         if (isset($posted_data['user_id'])) {
             $data->user_id = $posted_data['user_id'];
         }
-        if (isset($posted_data['add_to_cart_id'])) {
-            $data->add_to_cart_id = $posted_data['add_to_cart_id'];
+        if (isset($posted_data['restaurant_menue_id'])) {
+            $data->restaurant_menue_id = $posted_data['restaurant_menue_id'];
         }
-        if (isset($posted_data['menue_variant_id'])) {
-            $data->menue_variant_id = $posted_data['menue_variant_id'];
+        if (isset($posted_data['ip_address'])) {
+            $data->ip_address = $posted_data['ip_address'];
         }
-        
+
         $data->save();
         
-        $data = UserCartMenueVariants::getUserCartMenueVariants([
+        $data = FavMenu::getFavMenu([
             'detail' => true,
             'id' => $data->id
         ]);
         return $data;
     }
-    
-    public function deleteUserCartMenueVariants($id = 0, $where_posted_data = array())
+
+
+    public function deleteFavMenu($id = 0, $where_posted_data = array())
     {
         $is_deleted = false;
         if($id>0){
             $is_deleted = true;
-            $data = UserCartMenueVariants::find($id);
+            $data = FavMenu::find($id);
         }else{
-            $data = UserCartMenueVariants::latest();
+            $data = FavMenu::latest();
         }
 
         if(isset($where_posted_data) && count($where_posted_data)>0){
-            if (isset($where_posted_data['menue_variant_id'])) {
+            if (isset($where_posted_data['id'])) {
                 $is_deleted = true;
-                $data = $data->where('menue_variant_id', $where_posted_data['menue_variant_id']);
+                $data = $data->where('id', $where_posted_data['id']);
+                $data = $data->where('user_id', $where_posted_data['user_id']);
             }
         }
         

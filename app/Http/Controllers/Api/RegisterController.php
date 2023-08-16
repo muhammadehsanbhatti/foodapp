@@ -78,6 +78,15 @@ class RegisterController extends Controller
             }
         }
     }
+    public function useraddress(){
+        $get_data = $this->UserAddressObj->getUserAddress([
+            'user_id' => \Auth::user()->id,
+        ]);
+        if (!$get_data) {
+            return $this->sendError(["error" => "Please first add your address"]);
+        }
+        return $this->sendResponse($get_data, 'Your address');
+    }
 
     public function delete_user_address($id)
     {
@@ -152,7 +161,7 @@ class RegisterController extends Controller
             'user_login_status' => 'required|in:admin,customer',
             'business_type' => 'required',
             'restaurant_address' => 'required',
-            'cuisine_type' => 'required',
+            'cuisine_id' => 'required|exists:business_cuisines,id',
             'password' => 'required|min:6',
             'confirm_password' => 'required|required_with:password|same:password'
         );
@@ -201,14 +210,14 @@ class RegisterController extends Controller
             'business_name' => $requested_data['business_name'],
             'business_type' => $requested_data['business_type'],
             'restaurant_address' => $requested_data['restaurant_address'],
-            'cuisine_type' => $requested_data['cuisine_type'],
+            'cuisine_id' => $requested_data['cuisine_id'],
         ]);
         }
       
-        // $user = $this->UserObj->getUser([
-        //     'email' => $user['email'],
-        //     'detail' => true
-        // ]);
+        $data = $this->UserObj->getUser([
+            'id' => $data->id,
+            'detail' => true
+        ]);
         // \Auth::login($user);
         // $user['token'] =  $user->createToken('MyApp')->accessToken;
        

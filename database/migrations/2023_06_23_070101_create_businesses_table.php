@@ -17,6 +17,8 @@ class CreateBusinessesTable extends Migration
             $table->id();
          	$table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
+            $table->unsignedBigInteger('cuisine_id')->nullable();
+            $table->foreign('cuisine_id')->references('id')->on('business_cuisines')->onUpdate('cascade')->onDelete('cascade');
             $table->string('business_name', 100)->nullable();
             $table->string('restaurant_address',100)->nullable();
             $table->string('business_image')->nullable();
@@ -24,7 +26,6 @@ class CreateBusinessesTable extends Migration
             $table->bigInteger('starting_price')->nullable();
             $table->string('ordr_delivery_time')->nullable();
             $table->enum('business_type', ['Home Kitchen', 'Restaurant'])->default('Restaurant');
-            $table->enum('cuisine_type', ['None', 'Indian cuisine'])->default('None');
             $table->softDeletes();
             $table->timestamps();
         });

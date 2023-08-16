@@ -45,7 +45,6 @@ class PaymentController extends Controller
             $add_cart_data = $this->AddToCartObj->getAddToCart([
                 'user_checkout_id' => \Auth::user()->id,
             ]);
-            
             $get_restaurant_menue_id = $add_cart_data->ToArray();
             $return_data = array();
             $total_price = 0;
@@ -56,6 +55,24 @@ class PaymentController extends Controller
                     'restaurant_id' => $request->restaurant_id,
                     'detail' => true
                 ]);
+
+                // $user_cart_variants = $this->UserCartMenueVariantsObj->getUserCartMenueVariants([
+                //     'user_id' =>\Auth::user()->id,
+                //     'add_to_cart_id' => $get_restaurant_menue_value['id'],
+                //     'menue_variant_id' => $get_restaurant_menue_value['restaurant_menue_id'],
+                //     'detail' => true
+
+                // ]);
+                // if ($user_cart_variants) {
+                //     $user_variants_price = $this->MenueVariantsObj->getMenueVariant([
+                //         'restaurant_menue_id' =>$get_restaurant_menue_value['restaurant_menue_id'],
+                //         'detail' => true
+                        
+                //     ]);
+                //     // echo '<pre>'; print_r($user_variants_price->ToArray()); echo '</pre>'; 
+                //     $user_variant_price = (int)$user_variants_price->variant_price;
+                //     // echo '<pre>'; print_r($user_variant_price); echo '</pre>'; exit;
+                // }
                 $total_price += (int)$get_restaurant_menue['sale_price'];
                 $total_quantity += $get_restaurant_menue_value['quantity'];
                 $return_data[] = $get_restaurant_menue;
@@ -66,9 +83,11 @@ class PaymentController extends Controller
                 'detail' => true
             ]);
             if ($get_user_address) {
+                
                 $stripe = new \Stripe\StripeClient(
                     env('STRIPE_SECRET')
                 );
+                
                 $res = $stripe->tokens->create([
                   'card' => [
                     'number' => $request->card_number,
@@ -80,10 +99,10 @@ class PaymentController extends Controller
                Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
     
                 $response = $stripe->charges->create([
-                'amount' =>  $total_price,
-                'currency' => $request->currency,
-                'source' => $res->id,
-                'description' => $request->description,
+                    'amount' =>  $total_price * $total_quantity,
+                    'currency' => $request->currency,
+                    'source' => $res->id,
+                    'description' => $request->description,
                 ]);
                 
                 $posted_data = array();
@@ -92,7 +111,7 @@ class PaymentController extends Controller
                 $posted_data['restaurant_id'] = $request->restaurant_id;
                 $posted_data['customer_name'] = \Auth::user()->first_name. \Auth::user()->last_name;
                 $posted_data['currency'] = $request->currency;
-                $posted_data['amount_captured'] = $total_price;
+                $posted_data['amount_captured'] = $total_price * $total_quantity;
                 $posted_data['item_delivered_quantity'] = $total_quantity;
                 $posted_data['payment_status'] = 'Stripe';
                 $data = $this->PaymentHistroyObj->saveUpdatePaymentHistroy($posted_data);

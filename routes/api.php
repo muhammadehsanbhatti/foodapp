@@ -12,6 +12,7 @@ use App\Http\Controllers\Api\AboutController;
 use App\Http\Controllers\Api\TermsConditionController;
 use App\Http\Controllers\Api\AddToCartController;
 use App\Http\Controllers\Api\PaymentController;
+use App\Http\Controllers\Api\FavMenuController;
 
 
 /*
@@ -44,10 +45,11 @@ Route::get('cuisine_list', [RestaurantController::class, 'get_cuisine_list']);
 Route::get('restaurant_menue/{id}', [RestaurantMenueController::class, 'edit']); 
 
 Route::get('restaurant_list', [RestaurantController::class, 'index']); 
-Route::get('about', [AboutController::class, 'index']); 
-Route::get('privacy_policy', [PrivacyPolicyController::class, 'index']); 
-Route::get('terms_condition', [TermsConditionController::class, 'index']); 
+Route::get('aboutus', [AboutController::class, 'index']); 
+Route::get('privacypolicy', [PrivacyPolicyController::class, 'index']); 
+Route::get('termscondition', [TermsConditionController::class, 'index']); 
 
+Route::get('fav_menu', [FavMenuController::class, 'index']);
 
 
 Route::middleware('auth:api')->group( function () {
@@ -66,6 +68,7 @@ Route::middleware('auth:api')->group( function () {
 	
 	// User Address
 	Route::post('user_address', [RegisterController::class, 'user_address']); 
+	Route::get('useraddress', [RegisterController::class, 'useraddress']); 
 	Route::post('update_user_address/{id}', [RegisterController::class, 'update_user_address']); 
 	Route::delete('delete_user_address/{id}', [RegisterController::class, 'delete_user_address']); 
 	Route::post('editprofile', [RegisterController::class, 'edit_profile']);
@@ -75,6 +78,10 @@ Route::middleware('auth:api')->group( function () {
 	Route::post('restaurant_menue/{id}', [RestaurantMenueController::class, 'update']);
 	Route::post('required_menue_varients', [RestaurantMenueController::class, 'required_menue_varients_store']); 
 	Route::post('optional_menue_varients', [RestaurantMenueController::class, 'optional_menue_varients_store']); 
+
+	// Favourite Menu
+	Route::resource('fav_menu', FavMenuController::class);
+	Route::post('fav_menu/{id}', [FavMenuController::class, 'update']); 
 
 	// About
 	Route::resource('about', AboutController::class);

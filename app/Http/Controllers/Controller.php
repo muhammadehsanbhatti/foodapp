@@ -34,6 +34,7 @@ use App\Models\AddToCart;
 use App\Models\Payment;
 use App\Models\PaymentHistroy;
 use App\Models\UserCartMenueVariants;
+use App\Models\FavMenu;
 
 
 
@@ -74,6 +75,7 @@ class Controller extends BaseController
     public $PaymentObj;
     public $PaymentHistroyObj;
     public $UserCartMenueVariantsObj;
+    public $FavMenuObj;
 
     public function __construct() {
         
@@ -102,6 +104,7 @@ class Controller extends BaseController
         $this->PaymentObj = new Payment();
         $this->PaymentHistroyObj = new PaymentHistroy();
         $this->UserCartMenueVariantsObj = new UserCartMenueVariants();
+        $this->FavMenuObj = new FavMenu();
         
     }
 

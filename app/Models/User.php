@@ -160,6 +160,42 @@ class User extends Authenticatable
         if (isset($posted_data['profile_image'])) {
             $query = $query->where('users.profile_image', $posted_data['profile_image']);
         }
+        if (isset($posted_data['driving_license'])) {
+            $query = $query->where('users.driving_license', $posted_data['driving_license']);
+        }
+        if (isset($posted_data['certificate_img'])) {
+            $query = $query->where('users.certificate_img', $posted_data['certificate_img']);
+        }
+        if (isset($posted_data['dob'])) {
+            $query = $query->where('users.dob', $posted_data['dob']);
+        }
+        if (isset($posted_data['age'])) {
+            $query = $query->where('users.age', $posted_data['age']);
+        }
+        if (isset($posted_data['loggedin_count'])) {
+            $query = $query->where('users.loggedin_count', $posted_data['loggedin_count']);
+        }
+        if (isset($posted_data['latitude'])) {
+            $query = $query->where('users.latitude', $posted_data['latitude']);
+        }
+        if (isset($posted_data['longitude'])) {
+            $query = $query->where('users.longitude', $posted_data['longitude']);
+        }
+        if (isset($posted_data['status'])) {
+            $query = $query->where('users.status', $posted_data['status']);
+        }
+        if (isset($posted_data['last_login'])) {
+            $query = $query->where('users.last_login', $posted_data['last_login']);
+        }
+        if (isset($posted_data['is_login'])) {
+            $query = $query->where('users.is_login', $posted_data['is_login']);
+        }
+        if (isset($posted_data['last_activity'])) {
+            $query = $query->where('users.last_activity', $posted_data['last_activity']);
+        }
+        if (isset($posted_data['is_blocked'])) {
+            $query = $query->where('users.is_blocked', $posted_data['is_blocked']);
+        }
         if (isset($posted_data['last_seen'])) {
             $query = $query->where('users.last_seen', $posted_data['last_seen']);
         }
@@ -257,6 +293,42 @@ class User extends Authenticatable
         }
         if (isset($posted_data['profile_image'])) {
             $data->profile_image = $posted_data['profile_image'];
+        }
+        if (isset($posted_data['driving_license'])) {
+            $data->driving_license = $posted_data['driving_license'];
+        }
+        if (isset($posted_data['certificate_img'])) {
+            $data->certificate_img = $posted_data['certificate_img'];
+        }
+        if (isset($posted_data['dob'])) {
+            $data->dob = $posted_data['dob'];
+        }
+        if (isset($posted_data['age'])) {
+            $data->age = $posted_data['age'];
+        }
+        if (isset($posted_data['loggedin_count'])) {
+            $data->loggedin_count = $posted_data['loggedin_count'];
+        }
+        if (isset($posted_data['latitude'])) {
+            $data->latitude = $posted_data['latitude'];
+        }
+        if (isset($posted_data['longitude'])) {
+            $data->longitude = $posted_data['longitude'];
+        }
+        if (isset($posted_data['status'])) {
+            $data->status = $posted_data['status'];
+        }
+        if (isset($posted_data['last_login'])) {
+            $data->last_login = $posted_data['last_login'];
+        }
+        if (isset($posted_data['is_login'])) {
+            $data->is_login = $posted_data['is_login'];
+        }
+        if (isset($posted_data['last_activity'])) {
+            $data->last_activity = $posted_data['last_activity'];
+        }
+        if (isset($posted_data['is_blocked'])) {
+            $data->is_blocked = $posted_data['is_blocked'];
         }
         if (isset($posted_data['register_from'])) {
             $data->register_from = $posted_data['register_from'];

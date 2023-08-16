@@ -176,6 +176,20 @@ class RegisterController extends Controller
                 'confirm_password' => 'required|required_with:password|same:password'
             );
         }
+        if ($requested_data['user_login_status'] == 'rider') {
+            $rules = array(
+                   
+                'first_name' => 'required||regex:/^[a-zA-Z ]+$/u',
+                'last_name' => 'required||regex:/^[a-zA-Z ]+$/u',
+                // 'dob' => 'required|date|before:today',
+                'dob' => 'required|date|before_or_equal:' . now()->subYears(18)->format('Y-m-d'),
+                'gender' => 'required|in:Male,Female,Other',
+                'phone_number'  => 'required|unique:users,phone_number',
+                'email' => 'required|email||regex:/^[^\s@]+@[^\s@]+\.[^\s@]+$/u|unique:users,email',
+                'password' => 'required|min:6',
+                'confirm_password' => 'required|required_with:password|same:password'
+            );
+        }
         $validator = \Validator::make($requested_data, $rules);
         if ($validator->fails()) {
             return $this->sendError($validator->errors()->first(), $validator->messages());

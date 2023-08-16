@@ -19,6 +19,12 @@ class User extends Authenticatable
 {
     use HasApiTokens, HasFactory, Notifiable, HasRoles;
     use SoftDeletes;
+
+    public function setDobAttribute($value)
+    {
+        $this->attributes['dob'] = $value;
+        $this->attributes['age'] = now()->diffInYears($value);
+    }
     
     // protected $appends = array('conect_people_status');
     // public function getGenderAttribute($value){
@@ -156,6 +162,9 @@ class User extends Authenticatable
         }
         if (isset($posted_data['user_status'])) {
             $query = $query->where('users.user_status', $posted_data['user_status']);
+        }
+        if (isset($posted_data['gender'])) {
+            $query = $query->where('users.gender', $posted_data['gender']);
         }
         if (isset($posted_data['profile_image'])) {
             $query = $query->where('users.profile_image', $posted_data['profile_image']);
@@ -303,11 +312,14 @@ class User extends Authenticatable
         if (isset($posted_data['dob'])) {
             $data->dob = $posted_data['dob'];
         }
-        if (isset($posted_data['age'])) {
-            $data->age = $posted_data['age'];
-        }
+        // if (isset($posted_data['age'])) {
+        //     $data->age = $posted_data['age'];
+        // }
         if (isset($posted_data['loggedin_count'])) {
             $data->loggedin_count = $posted_data['loggedin_count'];
+        }
+        if (isset($posted_data['gender'])) {
+            $data->gender = $posted_data['gender'];
         }
         if (isset($posted_data['latitude'])) {
             $data->latitude = $posted_data['latitude'];

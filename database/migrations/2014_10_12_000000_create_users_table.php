@@ -27,6 +27,7 @@ class CreateUsersTable extends Migration
             $table->string('certificate_img')->nullable();
             $table->string('dob')->nullable();
             $table->string('age')->nullable();
+            $table->enum('gender', ['Male', 'Female', 'Other'])->nullable();
             $table->integer('loggedin_count')->default('0');
             $table->string('latitude')->nullable();
             $table->string('longitude')->nullable();

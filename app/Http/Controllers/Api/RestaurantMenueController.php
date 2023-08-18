@@ -47,7 +47,7 @@ class RestaurantMenueController extends Controller
             'stock'            => 'required',
             'category'         => 'required',
             'category_type'    => 'required',
-            'restaurant_file'  => 'required',
+            // 'restaurant_file'  => 'required',
         ]);
    
         if($validator->fails()){
@@ -174,7 +174,7 @@ class RestaurantMenueController extends Controller
             'stock'            => 'required',
             'category'         => 'required',
             'category_type'    => 'required',
-            'restaurant_file'  => 'required',
+            // 'restaurant_file'  => 'required',
         );
        
         $validator = \Validator::make($requested_data, $rules);

@@ -240,7 +240,7 @@ class RestaurantController extends Controller
             
             'business_name' => 'required|unique:businesses,business_name,'.$request->id,
             'restaurant_address' => 'required',
-            'business_image' => 'required|mimes:jpeg,png,jpg',
+            'business_image' => 'mimes:jpeg,png,jpg',
             'business_description' => 'required',
             'starting_price' => 'required',
             'ordr_delivery_time' => 'required',
@@ -255,7 +255,20 @@ class RestaurantController extends Controller
         }
 
         if($request->file('business_image')) {
-          
+
+            $get_business_data = $this->BusinessObj->getBusiness([
+                'user_id' =>\Auth::user()->id,
+                'detail' => true
+            ]);
+
+            if ($get_business_data && !empty($get_business_data->business_image)) {
+                    
+                $base_url = public_path();
+                $url = $base_url.'/'.$get_business_data->business_image;
+                if (file_exists($url)) {
+                    unlink($url);
+                }
+            }
             $extension = $request->business_image->getClientOriginalExtension();
             $file_name = time() . '_' . $request->business_image->getClientOriginalName();
             $filePath = $request->business_image->storeAs('business_image', $file_name, 'public');

@@ -37,6 +37,9 @@ class PaymentHistroy extends Model
         if (isset($posted_data['restaurant_id'])) {
             $query = $query->where('payment_histroys.restaurant_id', $posted_data['restaurant_id']);
         }
+        if (isset($posted_data['payment_card_information_id'])) {
+            $query = $query->where('payment_histroys.payment_card_information_id', $posted_data['payment_card_information_id']);
+        }
         if (isset($posted_data['user_address_id'])) {
             $query = $query->where('payment_histroys.user_address_id', $posted_data['user_address_id']);
         }
@@ -105,6 +108,9 @@ class PaymentHistroy extends Model
         }
         if (isset($posted_data['user_address_id'])) {
             $data->user_address_id = $posted_data['user_address_id'];
+        }
+        if (isset($posted_data['payment_card_information_id'])) {
+            $data->payment_card_information_id = $posted_data['payment_card_information_id'];
         }
         if (isset($posted_data['restaurant_id'])) {
             $data->restaurant_id = $posted_data['restaurant_id'];

@@ -13,6 +13,8 @@ use App\Http\Controllers\Api\TermsConditionController;
 use App\Http\Controllers\Api\AddToCartController;
 use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\FavMenuController;
+use App\Http\Controllers\Api\RiderChargesController;
+use App\Http\Controllers\Api\PaymentCardInformationController;
 
 
 /*
@@ -82,6 +84,14 @@ Route::middleware('auth:api')->group( function () {
 	// Favourite Menu
 	Route::resource('fav_menu', FavMenuController::class);
 	Route::post('fav_menu/{id}', [FavMenuController::class, 'update']); 
+
+	// Payment Card Information 
+	Route::resource('user_payment_cart_infomation', PaymentCardInformationController::class);
+	Route::post('user_payment_cart_infomation/{id}', [PaymentCardInformationController::class, 'update']);
+	
+	//  Rider Charges
+	Route::resource('rider_charge', RiderChargesController::class);
+	Route::post('rider_charge/{id}', [RiderChargesController::class, 'update']);
 
 	// About
 	Route::resource('about', AboutController::class);

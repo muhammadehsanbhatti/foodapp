@@ -248,7 +248,7 @@ class RegisterController extends Controller
             'first_name' => 'required||regex:/^[a-zA-Z ]+$/u',
             'last_name' => 'required||regex:/^[a-zA-Z ]+$/u',
             'phone_number'  => 'required|unique:users,phone_number,'.\Auth::user()->id,
-            'email' => 'required|email:rfc,dns|unique:users,email,'.\Auth::user()->id,
+            'email' => 'required|unique:users,email,'.\Auth::user()->id,
         );
         
         $validator = \Validator::make($requested_data, $rules);

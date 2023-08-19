@@ -70,52 +70,52 @@ class RestaurantMenueController extends Controller
                     ]);
                     // $restaurant_menue[] = $response->restaurant_file;
                     // echo '<pre>'; print_r($restaurant_menue['restaurant_file']); echo '</pre>'; exit;
-                }
-                if (isset($request_data['required_menue_type'])) {
-                    $posted_data = array();
-                    $posted_data['restaurant_menue_id']=  $restaurant_menue->id;
-                    $posted_data['menue_type']= $request_data['required_menue_type'];
-                    $posted_data['variant_type'] = $request_data['required_variant_type'];
-                    foreach ($request_data['required_variant_name'] as $variant_key => $variant_value) {
-                        $posted_data['variant_name']= $variant_value;
-                        $posted_data['variant_price']= $request_data['required_variant_price'][$variant_key];
-                        $posted_data['variant_description']= $request_data['required_variant_description'][$variant_key];
-                        $required_menue_variants[]=$this->MenueVariantsObj->saveUpdateMenueVariant($posted_data);
-                    }
-                    $restaurant_menue['required_menue_variants'] = $required_menue_variants;
-                }
-                if (isset($request_data['optional_menue_type'])) {
-                    $requestdata = array();
-                    $requestdata['restaurant_menue_id']=  $restaurant_menue->id;
-                    $requestdata['menue_type']= $request_data['optional_menue_type'];
-                    $requestdata['variant_type'] = $request_data['optional_variant_type'];
-
-                    foreach ($request_data['optional_variant_image'] as $variant_key => $variant_image_value) {
-                        $requestdata['variant_name']=$request_data['optional_variant_name'][$variant_key];
-                        $requestdata['variant_price']= $request_data['optional_variant_price'][$variant_key];
-                        $requestdata['variant_description']= $request_data['optional_variant_description'][$variant_key];
-
-                        if($request->file('optional_variant_image')) {
-                            $extension = $variant_image_value->getClientOriginalExtension();
-                            $file_name = time() . '_' . rand(1000000, 9999999) . '.' . $extension;
-                            $filePath =  $variant_image_value->storeAs('optional_menue_variant_images', $file_name, 'public');
-                            $filePath = 'storage/optional_menue_variant_images/' . $file_name;
-                            $requestdata['variant_image'] = $filePath;
-                        }
-                        $optional_menue_variants[] = $this->MenueVariantsObj->saveUpdateMenueVariant($requestdata);
-                    }
-                    $restaurant_menue['optional_menue_variants'] = $optional_menue_variants;
-                }
-                $restaurant_menue['restaurant_menue_files'] = $this->RestaurantFileObj->getRestaurantFile([
-                    'restaurnat_menu_id' => $restaurant_menue->id,
-                    // 'restaurant_file_relationship' =>true
-                ]);
-               
-                // echo '<pre>'; print_r($restaurant_menue['restaurant_file']); echo '</pre>'; exit;
-                return $this->sendResponse($restaurant_menue, 'Restaurant menue added successfully.');
+                }                
             }
+            if (isset($request_data['required_menue_type'])) {
+                $posted_data = array();
+                $posted_data['restaurant_menue_id']=  $restaurant_menue->id;
+                $posted_data['menue_type']= $request_data['required_menue_type'];
+                $posted_data['variant_type'] = $request_data['required_variant_type'];
+                foreach ($request_data['required_variant_name'] as $variant_key => $variant_value) {
+                    $posted_data['variant_name']= $variant_value;
+                    $posted_data['variant_price']= $request_data['required_variant_price'][$variant_key];
+                    $posted_data['variant_description']= $request_data['required_variant_description'][$variant_key];
+                    $required_menue_variants[]=$this->MenueVariantsObj->saveUpdateMenueVariant($posted_data);
+                }
+                $restaurant_menue['required_menue_variants'] = $required_menue_variants;
+            }
+            if (isset($request_data['optional_menue_type'])) {
+                $requestdata = array();
+                $requestdata['restaurant_menue_id']=  $restaurant_menue->id;
+                $requestdata['menue_type']= $request_data['optional_menue_type'];
+                $requestdata['variant_type'] = $request_data['optional_variant_type'];
+
+                foreach ($request_data['optional_variant_image'] as $variant_key => $variant_image_value) {
+                    $requestdata['variant_name']=$request_data['optional_variant_name'][$variant_key];
+                    $requestdata['variant_price']= $request_data['optional_variant_price'][$variant_key];
+                    $requestdata['variant_description']= $request_data['optional_variant_description'][$variant_key];
+
+                    if($request->file('optional_variant_image')) {
+                        $extension = $variant_image_value->getClientOriginalExtension();
+                        $file_name = time() . '_' . rand(1000000, 9999999) . '.' . $extension;
+                        $filePath =  $variant_image_value->storeAs('optional_menue_variant_images', $file_name, 'public');
+                        $filePath = 'storage/optional_menue_variant_images/' . $file_name;
+                        $requestdata['variant_image'] = $filePath;
+                    }
+                    $optional_menue_variants[] = $this->MenueVariantsObj->saveUpdateMenueVariant($requestdata);
+                }
+                $restaurant_menue['optional_menue_variants'] = $optional_menue_variants;
+            }
+            $restaurant_menue['restaurant_menue_files'] = $this->RestaurantFileObj->getRestaurantFile([
+                'restaurnat_menu_id' => $restaurant_menue->id,
+                // 'restaurant_file_relationship' =>true
+            ]);
+            
+            // echo '<pre>'; print_r($restaurant_menue['restaurant_file']); echo '</pre>'; exit;
+            return $this->sendResponse($restaurant_menue, 'Restaurant menue added successfully.');
         }else{
-            $error_message['error'] = 'Somthing went wrong';  
+            return $this->sendError(["error","Somthing went wrong"]);
         }
     }
 

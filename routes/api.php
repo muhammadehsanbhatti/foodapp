@@ -58,6 +58,7 @@ Route::middleware('auth:api')->group( function () {
 
 	// Add to cart
 	Route::post('/stripe_pament', [PaymentController::class, 'processPayment']);
+	Route::get('/order_histroy', [PaymentController::class, 'index']);
 	Route::post('add_cart/{id}', [AddToCartController::class, 'update']);
 	Route::resource('add_cart', AddToCartController::class);
 

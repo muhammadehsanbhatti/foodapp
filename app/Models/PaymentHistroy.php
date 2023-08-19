@@ -12,6 +12,22 @@ class PaymentHistroy extends Model
     use HasFactory;
     use HasSku;
 
+    public function userdata()
+    {
+        return $this->belongsTo(User::class, 'user_id');
+    }
+    public function restaurantData()
+    {
+        return $this->belongsTo(Business::class, 'restaurant_id')->with('restaurantMenue');
+    }
+    public function userPaymentInofmation()
+    {
+        return $this->belongsTo(PaymentCartInformation::class, 'payment_card_information_id');
+    }
+    public function userAddressInofmation()
+    {
+        return $this->belongsTo(UserAddress::class, 'user_address_id');
+    }
     
     public function skuOptions() : SkuOptions
     {
@@ -26,7 +42,12 @@ class PaymentHistroy extends Model
 
     public static function getPaymentHistroy($posted_data = array())
     {
-        $query = PaymentHistroy::latest();
+        $query = PaymentHistroy::latest()
+                        ->with('userdata')
+                        ->with('restaurantData')
+                        ->with('userPaymentInofmation')
+                        ->with('userAddressInofmation')
+        ;
 
         if (isset($posted_data['id'])) {
             $query = $query->where('payment_histroys.id', $posted_data['id']);

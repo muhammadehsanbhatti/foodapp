@@ -15,8 +15,12 @@ class PaymentController extends Controller
      * @return \Illuminate\Http\Response
      */
     public function index()
-    {
-        //
+    { 
+        $data = $this->PaymentHistroyObj->getPaymentHistroy([
+            'detail' =>true
+        ]);
+        return $this->sendResponse($data, 'Order histroy.');
+
     }
 
     public function processPayment(Request $request)
@@ -29,9 +33,7 @@ class PaymentController extends Controller
             $rules = array(
                 'user_id' => 'exists:add_to_carts,user_id',
                 'address_id' => 'required|exists:user_addresses,id',
-                'card_number' => 'required',
-                'exp_month' => 'required|max:250',
-                'exp_year' => 'required|max:250',
+                'payment_cart_information_id' => 'required|exists:payment_cart_information,id',
                 'restaurant_id' => 'required|exists:restaurant_menues,restaurant_id',
                 'cvc' => 'required|max:250',
             );
@@ -72,7 +74,7 @@ class PaymentController extends Controller
                 //     // echo '<pre>'; print_r($user_variants_price->ToArray()); echo '</pre>'; 
                 //     $user_variant_price = (int)$user_variants_price->variant_price;
                 //     // echo '<pre>'; print_r($user_variant_price); echo '</pre>'; exit;
-                // }
+                // }      
                 $total_price += (int)$get_restaurant_menue['sale_price'];
                 $total_quantity += $get_restaurant_menue_value['quantity'];
                 $return_data[] = $get_restaurant_menue;
@@ -83,50 +85,62 @@ class PaymentController extends Controller
                 'detail' => true
             ]);
             if ($get_user_address) {
-                
-                $stripe = new \Stripe\StripeClient(
-                    env('STRIPE_SECRET')
-                );
-                
-                $res = $stripe->tokens->create([
-                  'card' => [
-                    'number' => $request->card_number,
-                    'exp_month' =>  $request->exp_month,
-                    'exp_year' => $request->exp_year,
-                    'cvc' => $request->cvc,
-                  ],
+            
+                $get_user_cart_information = $this->PaymentCartInformationObj->getPaymentCartInformation([
+                    'user_id' => \Auth::user()->id,
+                    'id' => $request->payment_cart_information_id,
+                    'detail' => true
                 ]);
-               Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
-    
-                $response = $stripe->charges->create([
-                    'amount' =>  $total_price * $total_quantity,
-                    'currency' => $request->currency,
-                    'source' => $res->id,
-                    'description' => $request->description,
+
+                $get_rider_service_charges = $this->RiderChargeObj->getRiderCharge([
+                    'detail' => true
                 ]);
-                
-                $posted_data = array();
-                $posted_data['user_id'] = \Auth::user()->id;
-                $posted_data['user_address_id'] = $get_user_address->id;
-                $posted_data['restaurant_id'] = $request->restaurant_id;
-                $posted_data['customer_name'] = \Auth::user()->first_name. \Auth::user()->last_name;
-                $posted_data['currency'] = $request->currency;
-                $posted_data['amount_captured'] = $total_price * $total_quantity;
-                $posted_data['item_delivered_quantity'] = $total_quantity;
-                $posted_data['payment_status'] = 'Stripe';
-                $data = $this->PaymentHistroyObj->saveUpdatePaymentHistroy($posted_data);
-                if ($data) {
-                    $this->AddToCartObj->deleteAddToCart(0,['user_id' => \Auth::user()->id]);
+
+                if ($get_user_cart_information) {
+                    $stripe = new \Stripe\StripeClient(
+                        env('STRIPE_SECRET')
+                    );
+                    
+                    $res = $stripe->tokens->create([
+                      'card' => [
+                        'number' => $get_user_cart_information->card_number,
+                        'exp_month' =>  $get_user_cart_information->exp_month,
+                        'exp_year' => $get_user_cart_information->exp_year,
+                        'cvc' => $request->cvc,
+                      ],
+                    ]);
+                   Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
+        
+                    $response = $stripe->charges->create([
+                        'amount' =>  ($total_price * $total_quantity) + $get_rider_service_charges->per_killometer_price ,
+                        'currency' => $request->currency,
+                        'source' => $res->id,
+                        'description' => $request->description,
+                    ]);
+                    
+                    $posted_data = array();
+                    $posted_data['user_id'] = \Auth::user()->id;
+                    $posted_data['user_address_id'] = $get_user_address->id;
+                    $posted_data['payment_card_information_id'] = $get_user_cart_information->id;
+                    $posted_data['restaurant_id'] = $request->restaurant_id;
+                    $posted_data['customer_name'] = \Auth::user()->first_name. \Auth::user()->last_name;
+                    $posted_data['currency'] = $request->currency;
+                    $posted_data['amount_captured'] = $total_price * $total_quantity;
+                    $posted_data['item_delivered_quantity'] = $total_quantity;
+                    $posted_data['payment_status'] = $get_user_cart_information->payment_status;
+                    $data = $this->PaymentHistroyObj->saveUpdatePaymentHistroy($posted_data);
+                    if ($data) {
+                        $this->AddToCartObj->deleteAddToCart(0,['user_id' => \Auth::user()->id]);
+                    }
+                    return $this->sendResponse($response->status, 'Thansk, Your transaction completed successfully.');
                 }
-                return $this->sendResponse($response->status, 'Thansk, Your transaction completed successfully.');
+                else{
+                    return $this->sendError("eror", "Invalid cart information");
+                } 
             }
             else{
                 return $this->sendError("eror", "First you add address");
             }
-
-            
-
-
         } catch (\Exception $e) {
             return $this->sendError($e, ["error" => $e->getMessage()]);
 

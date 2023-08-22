@@ -128,6 +128,8 @@ class PaymentController extends Controller
                     $posted_data['amount_captured'] = $total_price * $total_quantity;
                     $posted_data['item_delivered_quantity'] = $total_quantity;
                     $posted_data['payment_status'] = $get_user_cart_information->payment_status;
+                    $posted_data['order_status'] = 'Pending';
+                    $posted_data['delivery_status'] = 'Pending';
                     $data = $this->PaymentHistroyObj->saveUpdatePaymentHistroy($posted_data);
                     if ($data) {
                         $this->AddToCartObj->deleteAddToCart(0,['user_id' => \Auth::user()->id]);
@@ -148,6 +150,38 @@ class PaymentController extends Controller
         }
     }
     
+    public function order_pickup(Request $request, $id)
+    {
+        $requested_data = array();
+        $requested_data = $request->all();
+        $rules = array(
+            'order_status'    => 'required',
+        );
+       
+        $validator = \Validator::make($requested_data, $rules);
+
+        if ($validator->fails()) {
+            return $this->sendError($validator->errors()->first(), ["error" => $validator->errors()->first()]);
+        }
+
+        $check_user = $this->UserObj->getUser([
+            'id' => \Auth::user()->id,
+            'user_login_status' => 'rider',
+            'is_blocked' => 0
+        ]);
+        if ($check_user) {
+            $data = $this->PrivacyPolicyObj->saveUpdatePrivacyPolicy([
+                'update_id' => $id,
+                'rider_id' => \Auth::user()->id,
+                'order_status' => $requested_data['order_status']
+            ]);
+            return $this->sendResponse($data, 'Order status updated successfully.');
+        }
+        else{
+            return $this->sendError("error" ,'Something went wrong');
+
+        }
+    }
 
     /**
      * Show the form for creating a new resource.

@@ -35,7 +35,7 @@ class RegisterController extends Controller
             return $this->sendError($validator->errors()->first(), ["error" => $validator->errors()->first()]);
         }
         
-        $requested_data['user_id'] = \Auth::user()->id;
+                $requested_data['user_id'] = \Auth::user()->id;
         foreach ($posted_data['country'] as $key => $value) {
             $requested_data['country'] = $value;
             $requested_data['city'] = $posted_data['city'][$key];

@@ -23,11 +23,15 @@ class CreatePaymentHistroysTable extends Migration
             $table->foreign('restaurant_id')->references('id')->on('businesses')->onUpdate('cascade')->onDelete('cascade');
             $table->unsignedBigInteger('user_address_id');
             $table->foreign('user_address_id')->references('id')->on('user_addresses')->onUpdate('cascade')->onDelete('cascade');
+            $table->unsignedBigInteger('rider_id')->nullable();
+            $table->foreign('rider_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
             $table->string('customer_name')->nullable();
             $table->string('amount_captured')->nullable();
             $table->string('currency')->nullable();
             $table->integer('item_delivered_quantity')->nullable();
             $table->enum('payment_status', ['Stripe', 'Paypal', 'ApplePay', 'CashOnDelivery'])->nullable();
+            $table->enum('order_status', ['Accept', 'Reject'])->nullable();
+            $table->enum('delivery_status', ['Pending', 'Preparing', 'OnWay', 'Delivered'])->nullable();
             $table->string('payment_sku')->nullable();
             $table->timestamps();
         });

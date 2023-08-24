@@ -27,6 +27,10 @@ class UserCartMenueVariants extends Model
         if (isset($posted_data['add_to_cart_id'])) {
             $query = $query->where('user_cart_menue_variants.add_to_cart_id', $posted_data['add_to_cart_id']);
         }
+        
+        if (isset($posted_data['menue_variant_id_in'])) {
+            $query = $query->whereIn('user_cart_menue_variants.menue_variant_id', $posted_data['menue_variant_id_in']);
+        }
         if (isset($posted_data['menue_variant_id'])) {
             $query = $query->where('user_cart_menue_variants.menue_variant_id', $posted_data['menue_variant_id']);
         }

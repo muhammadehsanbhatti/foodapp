@@ -48,7 +48,7 @@ class AddToCartController extends Controller
         ]);
    
         if($validator->fails()){
-            return $this->sendError('Please fill all the required fields.', ["error"=>$validator->errors()->first()]);   
+            return $this->sendError($validator->errors()->first(), ["error"=>$validator->errors()->first()]);   
         }
         
         if (\Auth::check()) {
@@ -58,22 +58,45 @@ class AddToCartController extends Controller
         else{
             $posted_data['session_id'] =\Request::getClientIp(true);
         }
+
+        $check_menue_variants = $this->MenueVariantsObj->getMenueVariant([
+            'restaurant_menue_id'=> $request->restaurant_menue_id,
+        ]);
+
         $posted_data['restaurant_menue_id'] = $request->restaurant_menue_id;
         $posted_data['quantity'] = $request->quantity;
-        $add_to_cart_data = $this->AddToCartObj->saveUpdateAddToCart($posted_data);
-        if (isset($request_data['menue_varient_id'])) {
-            foreach ($request_data['menue_varient_id'] as $restaurant_menue_varient_key => $restaurant_menue_varient_value) {
-                $cart_variants['menue_variant_id'] = $restaurant_menue_varient_value;
-                $cart_variants['add_to_cart_id'] = $add_to_cart_data->id;
-                $cart_variants['user_id'] = \Auth::user()->id;
-                $addToCartData[] = $this->UserCartMenueVariantsObj->saveUpdateUserCartMenueVariants($cart_variants);
+
+        $check_user_already = $this->AddToCartObj->getAddToCart([
+            'user_id'=> \Auth::user()->id,
+            'restaurant_menue_id'=> $request->restaurant_menue_id,
+            'detail' =>true
+        ]);
+        if (!$check_user_already) {
+            $add_to_cart_data = $this->AddToCartObj->saveUpdateAddToCart($posted_data);
+            if (isset($request_data['menue_varient_id'])) {
+                if (count($check_menue_variants) > 0) {
+                    foreach ($request_data['menue_varient_id'] as $restaurant_menue_varient_key => $restaurant_menue_varient_value) {
+                        $cart_variants['menue_variant_id'] = $restaurant_menue_varient_value;
+                        $cart_variants['add_to_cart_id'] = $add_to_cart_data->id;
+                        $cart_variants['user_id'] = \Auth::user()->id;
+                        $addToCartData[] = $this->UserCartMenueVariantsObj->saveUpdateUserCartMenueVariants($cart_variants);
+                    }
+                }else{
+                    return $this->sendError("error" ,'This menue variant id does not exists in this restaurant menue');
+                }  
             }
             $add_to_cart_data = $this->AddToCartObj->getAddToCart([
                 'detail'=>true,
                 'id'=>$add_to_cart_data->id,
             ]);
+            
+            return $this->sendResponse($add_to_cart_data, 'Add to cart added successfully.');  
         }
-        return $this->sendResponse($add_to_cart_data, 'Add to cart added successfully.');
+        else{
+            return $this->sendError("error" ,'You already cart');
+        }
+        
+       
     }
 
     /**
@@ -111,7 +134,7 @@ class AddToCartController extends Controller
         $request_data['update_id'] = $id; 
 
         $validator = \Validator::make($request_data, [
-            'restaurant_menue_id'    => 'required|exists:restaurant_menues,id',
+            // 'restaurant_menue_id'    => 'required|exists:restaurant_menues,id',
             'quantity'        => 'required',
         ]);
    
@@ -128,34 +151,28 @@ class AddToCartController extends Controller
             $request_data['session_id'] =\Request::getClientIp(true);
         }
 
-        $request_data['restaurant_menue_id'] = $request->restaurant_menue_id;
+        // $request_data['restaurant_menue_id'] = $request->restaurant_menue_id;
         $request_data['quantity'] = $request->quantity;
         $add_to_cart_data = $this->AddToCartObj->saveUpdateAddToCart($request_data);
         
 
-        if (isset($request_data['menue_varient_id'])) {
-            $get_cart_variants = $this->UserCartMenueVariantsObj->getUserCartMenueVariants([
-                'add_to_cart_id' => $add_to_cart_data->id,
-            ])->ToArray();
+        if (isset($request_data['menue_variant_id'])) {
+                $cart_variants['add_to_cart_id'] = $add_to_cart_data->id;
+                $cart_variants['user_id'] = \Auth::user()->id;
 
-                $update_ids = array_column($get_cart_variants, 'id');
-                foreach ($request_data['menue_varient_id'] as $restaurant_menue_varient_key => $restaurant_menue_varient_value) {
-                    // if ($update_ids) {
-                    // }
-                    $cart_variants['update_id'] = $update_ids[$restaurant_menue_varient_key];
+                foreach ($request_data['menue_variant_id'] as $restaurant_menue_key => $restaurant_menue_varient_value) {
+                    $get_cart_variants = $this->UserCartMenueVariantsObj->getUserCartMenueVariants([
+                        'add_to_cart_id' => $id,
+                        'menue_variant_id' => $request_data['menue_variant_id'][$restaurant_menue_key],
+                        'detail' =>true
+                    ]);
+                    if ($get_cart_variants) { 
+                        $cart_variants['update_id'] = $get_cart_variants->id;
+                    }
                     $cart_variants['menue_variant_id'] = $restaurant_menue_varient_value;
-                    $cart_variants['add_to_cart_id'] = $add_to_cart_data->id;
-                    $cart_variants['user_id'] = \Auth::user()->id;
-                
                     $this->UserCartMenueVariantsObj->saveUpdateUserCartMenueVariants($cart_variants);
                 }
-            
-            // foreach ($request_data['menue_varient_id'] as $restaurant_menue_varient_key => $restaurant_menue_varient_value) {
-            //     $cart_variants['menue_variant_id'] = $restaurant_menue_varient_value;
-            //     $cart_variants['add_to_cart_id'] = $add_to_cart_data->id;
-            //     $cart_variants['user_id'] = \Auth::user()->id;
-            //     $addToCartData[] = $this->UserCartMenueVariantsObj->saveUpdateUserCartMenueVariants($cart_variants);
-            // }
+               
             $add_to_cart_data = $this->AddToCartObj->getAddToCart([
                 'detail'=>true,
                 'id'=>$add_to_cart_data->id,

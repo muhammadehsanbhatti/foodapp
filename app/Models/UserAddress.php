@@ -31,6 +31,12 @@ class UserAddress extends Model
         if (isset($posted_data['address'])) {
             $query = $query->where('user_addresses.address', $posted_data['address']);
         }
+        if (isset($posted_data['latitude'])) {
+            $query = $query->where('user_addresses.latitude', $posted_data['latitude']);
+        }
+        if (isset($posted_data['longitude'])) {
+            $query = $query->where('user_addresses.longitude', $posted_data['longitude']);
+        }
         
         $query->select('user_addresses.*');
         
@@ -87,6 +93,12 @@ class UserAddress extends Model
         }
         if (isset($posted_data['address'])) {
             $data->address = $posted_data['address'];
+        }
+        if (isset($posted_data['latitude'])) {
+            $data->latitude = $posted_data['latitude'];
+        }
+        if (isset($posted_data['longitude'])) {
+            $data->longitude = $posted_data['longitude'];
         }
         
         $data->save();

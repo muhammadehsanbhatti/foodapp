@@ -19,6 +19,12 @@ class PaymentCartInformation extends Model
         if (isset($posted_data['user_id'])) {
             $query = $query->where('payment_cart_information.user_id', $posted_data['user_id']);
         }
+        if (isset($posted_data['card_holder_name'])) {
+            $query = $query->where('payment_cart_information.card_holder_name', $posted_data['card_holder_name']);
+        }
+        if (isset($posted_data['cvc'])) {
+            $query = $query->where('payment_cart_information.cvc', $posted_data['cvc']);
+        }
         if (isset($posted_data['card_number'])) {
             $query = $query->where('payment_cart_information.card_number', $posted_data['card_number']);
         }
@@ -76,6 +82,9 @@ class PaymentCartInformation extends Model
         if (isset($posted_data['user_id'])) {
             $data->user_id = $posted_data['user_id'];
         }
+        if (isset($posted_data['card_holder_name'])) {
+            $data->card_holder_name = $posted_data['card_holder_name'];
+        }
         if (isset($posted_data['card_number'])) {
             $data->card_number = $posted_data['card_number'];
         }
@@ -84,6 +93,9 @@ class PaymentCartInformation extends Model
         }
         if (isset($posted_data['exp_year'])) {
             $data->exp_year = $posted_data['exp_year'];
+        }
+        if (isset($posted_data['cvc'])) {
+            $data->cvc = $posted_data['cvc'];
         }
         if (isset($posted_data['payment_status'])) {
             $data->payment_status = $posted_data['payment_status'];

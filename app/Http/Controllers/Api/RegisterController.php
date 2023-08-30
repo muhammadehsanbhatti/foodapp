@@ -28,6 +28,8 @@ class RegisterController extends Controller
             'city' => 'required',
             'address_type' => 'required',
             'address' => 'required',
+            'latitude' => 'required',
+            'longitude' => 'required',
         );
         $validator = \Validator::make($request->all(), $rules);
 
@@ -35,12 +37,14 @@ class RegisterController extends Controller
             return $this->sendError($validator->errors()->first(), ["error" => $validator->errors()->first()]);
         }
         
-                $requested_data['user_id'] = \Auth::user()->id;
+        $requested_data['user_id'] = \Auth::user()->id;
         foreach ($posted_data['country'] as $key => $value) {
             $requested_data['country'] = $value;
             $requested_data['city'] = $posted_data['city'][$key];
             $requested_data['address_type'] = $posted_data['address_type'][$key];
             $requested_data['address'] = $posted_data['address'][$key];
+            $requested_data['latitude'] = $posted_data['latitude'][$key];
+            $requested_data['longitude'] = $posted_data['longitude'][$key];
             
             $data[] = $this->UserAddressObj->saveUpdateUserAddress($requested_data);
         }
@@ -57,6 +61,8 @@ class RegisterController extends Controller
                 'city' => 'required',
                 'address_type' => 'required',
                 'address' => 'required',
+                'latitude' => 'required',
+                'longitude' => 'required',
             );
             $validator = \Validator::make($request->all(), $rules);
     

@@ -17,10 +17,12 @@ class CreatePaymentCartInformationTable extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
-            $table->string('card_number')->nullable();
-            $table->integer('exp_month')->nullable();
-            $table->integer('exp_year')->nullable();
-            $table->enum('payment_status', ['Stripe', 'Paypal', 'ApplePay', 'CashOnDelivery'])->nullable();
+            $table->string('card_holder_name');
+            $table->string('card_number');
+            $table->integer('exp_month');
+            $table->integer('exp_year');
+            $table->integer('cvc');
+            $table->enum('payment_status', ['Stripe', 'Paypal', 'ApplePay', 'CashOnDelivery']);
             $table->timestamps();
         });
     }

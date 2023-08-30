@@ -106,7 +106,7 @@ class PaymentController extends Controller
                         'number' => $get_user_cart_information->card_number,
                         'exp_month' =>  $get_user_cart_information->exp_month,
                         'exp_year' => $get_user_cart_information->exp_year,
-                        'cvc' => $request->cvc,
+                        'cvc' => $get_user_cart_information->cvc,
                       ],
                     ]);
                    Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
@@ -123,7 +123,7 @@ class PaymentController extends Controller
                     $posted_data['user_address_id'] = $get_user_address->id;
                     $posted_data['payment_card_information_id'] = $get_user_cart_information->id;
                     $posted_data['restaurant_id'] = $request->restaurant_id;
-                    $posted_data['customer_name'] = \Auth::user()->first_name. \Auth::user()->last_name;
+                    $posted_data['customer_name'] = $get_user_cart_information->card_holder_name;
                     $posted_data['currency'] = $request->currency;
                     $posted_data['amount_captured'] = $total_price * $total_quantity;
                     $posted_data['item_delivered_quantity'] = $total_quantity;

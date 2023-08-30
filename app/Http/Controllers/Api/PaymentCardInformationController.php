@@ -43,9 +43,11 @@ class PaymentCardInformationController extends Controller
         $request_data = $request->all(); 
 
         $validator = \Validator::make($request_data, [
+            'card_holder_name'    => 'required',
             'card_number'    => 'required|unique:payment_cart_information,card_number,'.$request->card_number,
             'exp_month'    => 'required',
             'exp_year'    => 'required',
+            'cvc'    => 'required',
             'payment_status'    => 'required',
         ]);
    
@@ -94,10 +96,12 @@ class PaymentCardInformationController extends Controller
 
         $validator = \Validator::make($request_data, [
             
+            'card_holder_name'    => 'required',
             'card_number'    => 'required',
             'exp_month'    => 'required',
             'exp_year'    => 'required',
             'payment_status'    => 'required',
+            'cvc'    => 'required',
         ]);
    
         if($validator->fails()){

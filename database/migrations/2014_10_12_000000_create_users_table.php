@@ -22,6 +22,7 @@ class CreateUsersTable extends Migration
             $table->string('password')->nullable();
             $table->enum('user_login_status', ['super-admin', 'admin', 'customer', 'rider'])->default('customer');
             $table->enum('register_from', ['Web', 'Facebook', 'Gmail', 'Apple'])->default('Web');
+            $table->enum('user_status', ['Pending', 'InProgress', 'Approved', 'Rejected'])->default('Pending');
             $table->string('driving_license')->nullable();
             $table->string('profile_image')->nullable();
             $table->string('certificate_img')->nullable();

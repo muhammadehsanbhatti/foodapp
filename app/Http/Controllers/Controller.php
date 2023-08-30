@@ -37,6 +37,7 @@ use App\Models\UserCartMenueVariants;
 use App\Models\FavMenu;
 use App\Models\RiderCharge;
 use App\Models\PaymentCartInformation;
+use App\Models\GeneralSetting;
 
 
 
@@ -80,6 +81,7 @@ class Controller extends BaseController
     public $FavMenuObj;
     public $RiderChargeObj;
     public $PaymentCartInformationObj;
+    public $GeneralSettingObj;
 
     public function __construct() {
         
@@ -111,7 +113,8 @@ class Controller extends BaseController
         $this->FavMenuObj = new FavMenu();
         $this->RiderChargeObj = new RiderCharge();
         $this->PaymentCartInformationObj = new PaymentCartInformation();
-
+        $this->GeneralSettingObj = new GeneralSetting();
+        
         
     }
 

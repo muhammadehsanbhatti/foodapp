@@ -15,6 +15,7 @@ use App\Http\Controllers\Api\PaymentController;
 use App\Http\Controllers\Api\FavMenuController;
 use App\Http\Controllers\Api\RiderChargesController;
 use App\Http\Controllers\Api\PaymentCardInformationController;
+use App\Http\Controllers\Api\GeneralSettingController;
 
 
 /*
@@ -46,10 +47,12 @@ Route::get('verify-email/{token?}', [RegisterController::class, 'verifyUserEmail
 Route::get('cuisine_list', [RestaurantController::class, 'get_cuisine_list']); 
 Route::get('restaurant_menue/{id}', [RestaurantMenueController::class, 'edit']); 
 
-Route::get('restaurant_list', [RestaurantController::class, 'index']); 
-Route::get('aboutus', [AboutController::class, 'index']); 
-Route::get('privacypolicy', [PrivacyPolicyController::class, 'index']); 
-Route::get('termscondition', [TermsConditionController::class, 'index']); 
+Route::get('restaurant_list', [RestaurantController::class, 'index']);
+Route::get('general_setting', [GeneralSettingController::class, 'general_setting_index']); 
+
+// Route::get('aboutus', [AboutController::class, 'index']); 
+// Route::get('privacypolicy', [PrivacyPolicyController::class, 'index']); 
+// Route::get('termscondition', [TermsConditionController::class, 'index']); 
 
 Route::get('fav_menu', [FavMenuController::class, 'index']);
 
@@ -95,16 +98,21 @@ Route::middleware('auth:api')->group( function () {
 	Route::resource('rider_charge', RiderChargesController::class);
 	Route::post('rider_charge/{id}', [RiderChargesController::class, 'update']);
 
-	// About
-	Route::resource('about', AboutController::class);
-	Route::post('about/{id}', [AboutController::class, 'update']);
-	
-	// Privacy Policy
-	Route::resource('privacy_policy', PrivacyPolicyController::class);
-	Route::post('privacy_policy/{id}', [PrivacyPolicyController::class, 'update']);
+	// GeneralSetting
+	Route::post('general_setting/{id}', [GeneralSettingController::class, 'update']);
+	Route::resource('general_setting', GeneralSettingController::class);
 
-	// Terms and Conditions
-	Route::resource('terms_condition', TermsConditionController::class);
-	Route::post('terms_condition/{id}',  [TermsConditionController::class, 'update']);
+	
+	// About
+	// Route::resource('about', AboutController::class);
+	// Route::post('about/{id}', [AboutController::class, 'update']);
+	
+	// // Privacy Policy
+	// Route::resource('privacy_policy', PrivacyPolicyController::class);
+	// Route::post('privacy_policy/{id}', [PrivacyPolicyController::class, 'update']);
+
+	// // Terms and Conditions
+	// Route::resource('terms_condition', TermsConditionController::class);
+	// Route::post('terms_condition/{id}',  [TermsConditionController::class, 'update']);
 
 });

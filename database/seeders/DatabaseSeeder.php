@@ -23,6 +23,7 @@ class DatabaseSeeder extends Seeder
             EmailTemplateSeeder::class,
             PassportSeeder::class,
             BusinessCuisineSeeder::class,
+            GeneralSettingSeeder::class,         
         ]);
     }
 }

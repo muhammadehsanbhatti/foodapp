@@ -48,7 +48,7 @@ Route::get('cuisine_list', [RestaurantController::class, 'get_cuisine_list']);
 Route::get('restaurant_menue/{id}', [RestaurantMenueController::class, 'edit']); 
 
 Route::get('restaurant_list', [RestaurantController::class, 'index']);
-Route::get('general_setting', [GeneralSettingController::class, 'general_setting_index']); 
+Route::get('generalSetting', [GeneralSettingController::class, 'general_setting_index']); 
 
 // Route::get('aboutus', [AboutController::class, 'index']); 
 // Route::get('privacypolicy', [PrivacyPolicyController::class, 'index']); 

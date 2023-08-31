@@ -25,6 +25,8 @@ class CreateBusinessesTable extends Migration
             $table->string('business_description',15)->nullable();
             $table->bigInteger('starting_price')->nullable();
             $table->string('ordr_delivery_time')->nullable();
+            $table->string('latitude')->nullable();
+            $table->string('longitude')->nullable();
             $table->enum('business_type', ['Home Kitchen', 'Restaurant'])->default('Restaurant');
             $table->softDeletes();
             $table->timestamps();

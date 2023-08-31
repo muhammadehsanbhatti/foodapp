@@ -53,6 +53,12 @@ class Business extends Model
         if (isset($posted_data['starting_price'])) {
             $query = $query->where('businesses.starting_price', $posted_data['starting_price']);
         }
+        if (isset($posted_data['latitude'])) {
+            $query = $query->where('businesses.latitude', $posted_data['latitude']);
+        }
+        if (isset($posted_data['longitude'])) {
+            $query = $query->where('businesses.longitude', $posted_data['longitude']);
+        }
         if (isset($posted_data['ordr_delivery_time'])) {
             $query = $query->where('businesses.ordr_delivery_time', $posted_data['ordr_delivery_time']);
         }
@@ -120,6 +126,12 @@ class Business extends Model
         }
         if (isset($posted_data['starting_price'])) {
             $data->starting_price = $posted_data['starting_price'];
+        }
+        if (isset($posted_data['latitude'])) {
+            $data->latitude = $posted_data['latitude'];
+        }
+        if (isset($posted_data['longitude'])) {
+            $data->longitude = $posted_data['longitude'];
         }
         if (isset($posted_data['ordr_delivery_time'])) {
             $data->ordr_delivery_time = $posted_data['ordr_delivery_time'];

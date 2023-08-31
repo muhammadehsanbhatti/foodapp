@@ -37,8 +37,8 @@ class RestaurantMenueController extends Controller
     {
         $request_data = $request->all(); 
         $base_url = public_path();
-        
-        $validator = \Validator::make($request_data, [
+
+        $rules = array(
             'restaurant_id'    => 'required|exists:businesses,id',
             'item_name'        => 'required||regex:/^[a-zA-Z ]+$/u',
             'description'      => 'required||regex:/^[a-zA-Z0-9 ]+$/u',
@@ -47,11 +47,18 @@ class RestaurantMenueController extends Controller
             'stock'            => 'required',
             'category'         => 'required',
             'category_type'    => 'required',
-            // 'restaurant_file'  => 'required',
-        ]);
-   
-        if($validator->fails()){
-            return $this->sendError('Please fill all the required fields.', ["error"=>$validator->errors()->first()]);   
+        );
+        if (isset($request_data['required_menue_type'])) {
+            $rules = array(
+                'required_menue_type'    => 'required',
+                'required_variant_type'        => 'required|',
+                'required_variant_name'      => 'required',
+                'required_variant_price'    => 'required',
+            );
+        }
+        $validator = \Validator::make($request_data, $rules);
+        if ($validator->fails()) {
+            return $this->sendError($validator->errors()->first(), ["error" => $validator->errors()->first()]);
         }
 
         $restaurant_menue = $this->RestaurantMenueObj->saveUpdateRestaurantMenue($request_data);
@@ -80,7 +87,9 @@ class RestaurantMenueController extends Controller
                 foreach ($request_data['required_variant_name'] as $variant_key => $variant_value) {
                     $posted_data['variant_name']= $variant_value;
                     $posted_data['variant_price']= $request_data['required_variant_price'][$variant_key];
-                    $posted_data['variant_description']= $request_data['required_variant_description'][$variant_key];
+                    if (isset($request_data['required_variant_description'])) {
+                        $posted_data['variant_description']= $request_data['required_variant_description'][$variant_key];
+                    }
                     $required_menue_variants[]=$this->MenueVariantsObj->saveUpdateMenueVariant($posted_data);
                 }
                 $restaurant_menue['required_menue_variants'] = $required_menue_variants;

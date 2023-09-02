@@ -35,7 +35,6 @@ class PaymentController extends Controller
                 'address_id' => 'required|exists:user_addresses,id',
                 'payment_cart_information_id' => 'required|exists:payment_cart_information,id',
                 'restaurant_id' => 'required|exists:restaurant_menues,restaurant_id',
-                'cvc' => 'required|max:250',
             );
            
             $validator = \Validator::make($requested_data, $rules);
@@ -97,26 +96,26 @@ class PaymentController extends Controller
                 ]);
 
                 if ($get_user_cart_information) {
-                    $stripe = new \Stripe\StripeClient(
-                        env('STRIPE_SECRET')
-                    );
+                $stripe = new \Stripe\StripeClient(
+                env('STRIPE_SECRET')
+                );
                     
-                    $res = $stripe->tokens->create([
-                      'card' => [
-                        'number' => $get_user_cart_information->card_number,
-                        'exp_month' =>  $get_user_cart_information->exp_month,
-                        'exp_year' => $get_user_cart_information->exp_year,
-                        'cvc' => $get_user_cart_information->cvc,
-                      ],
-                    ]);
-                   Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
+                $res = $stripe->tokens->create([
+                'card' => [
+                'number' => $get_user_cart_information->card_number,
+                'exp_month' =>  $get_user_cart_information->exp_month,
+                'exp_year' => $get_user_cart_information->exp_year,
+                'cvc' => $get_user_cart_information->cvc,
+                ],
+                ]);
+                Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
         
-                    $response = $stripe->charges->create([
-                        'amount' =>  ($total_price * $total_quantity) + $get_rider_service_charges->per_killometer_price ,
-                        'currency' => $request->currency,
-                        'source' => $res->id,
-                        'description' => $request->description,
-                    ]);
+                $response = $stripe->charges->create([
+                'amount' =>  ($total_price * $total_quantity) + $get_rider_service_charges->per_killometer_price ,
+                'currency' => $request->currency,
+                'source' => $res->id,
+                'description' => $request->description,
+                ]);
                     
                     $posted_data = array();
                     $posted_data['user_id'] = \Auth::user()->id;
@@ -128,6 +127,7 @@ class PaymentController extends Controller
                     $posted_data['amount_captured'] = $total_price * $total_quantity;
                     $posted_data['item_delivered_quantity'] = $total_quantity;
                     $posted_data['payment_status'] = $get_user_cart_information->payment_status;
+                    $posted_data['rider_charges'] = 50;
                     $posted_data['order_status'] = 'Pending';
                     $posted_data['delivery_status'] = 'Pending';
                     $data = $this->PaymentHistroyObj->saveUpdatePaymentHistroy($posted_data);

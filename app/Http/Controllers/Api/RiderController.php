@@ -16,6 +16,12 @@ class RiderController extends Controller
     {
         //
     }
+    public function rider_earnings(){
+        $data = $this->PaymentHistroyObj->getPaymentHistroy([
+            'user_id' => \Auth::user()->id,
+        ]);
+        return $this->sendResponse($data, 'Rider earnings');
+    }
 
     /**
      * Show the form for creating a new resource.

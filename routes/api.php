@@ -17,6 +17,7 @@ use App\Http\Controllers\Api\RiderChargesController;
 use App\Http\Controllers\Api\PaymentCardInformationController;
 use App\Http\Controllers\Api\GeneralSettingController;
 use App\Http\Controllers\Api\UserController;
+use App\Http\Controllers\Api\RiderController;
 
 
 /*
@@ -97,6 +98,7 @@ Route::middleware('auth:api')->group( function () {
 	
 	//  Rider Charges
 	Route::resource('rider_charge', RiderChargesController::class);
+	Route::get('rider_earning',[RiderController::class, 'rider_earnings']);
 	Route::get('rider_list', [UserController::class,'index']);
 	Route::post('change_rider_list/{id}', [UserController::class,'change_status']);
 	Route::post('rider_charge/{id}', [RiderChargesController::class, 'update']);

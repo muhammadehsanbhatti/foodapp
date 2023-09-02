@@ -82,8 +82,8 @@ class PaymentHistroy extends Model
         if (isset($posted_data['payment_sku'])) {
             $query = $query->where('payment_histroys.payment_sku', $posted_data['payment_sku']);
         }
-        if (isset($posted_data['payment_sku'])) {
-            $query = $query->where('payment_histroys.payment_sku', $posted_data['payment_sku']);
+        if (isset($posted_data['rider_charges'])) {
+            $query = $query->where('payment_histroys.rider_charges', $posted_data['rider_charges']);
         }
         if (isset($posted_data['order_status'])) {
             $query = $query->where('payment_histroys.order_status', $posted_data['order_status']);
@@ -158,6 +158,9 @@ class PaymentHistroy extends Model
         }
         if (isset($posted_data['payment_status'])) {
             $data->payment_status = $posted_data['payment_status'];
+        }
+        if (isset($posted_data['rider_charges'])) {
+            $data->rider_charges = $posted_data['rider_charges'];
         }
         if (isset($posted_data['order_status'])) {
             $data->order_status = $posted_data['order_status'];

@@ -17,17 +17,33 @@ class UserController extends Controller
     {
         $request_data = $request->all();
         $request_data['paginate'] = 10;
-        if (isset($request_data['per_page']))
+        $request_data['user_login_status'] = 'rider';
+        if (isset($request_data['per_page'])){
             $request_data['paginate'] = $request_data['per_page'];
-
-        if ( !isset($request_data['id']) ) {
-            $request_data['users_not_in'] = [1];
         }
         
         $user = User::getUser($request_data);
-        $message = count($user) > 0 ? 'Users retrieved successfully.' : 'Users not found against your query.';
+        return $this->sendResponse($user, 'List of riders');
+    }
 
-        return $this->sendResponse($user, $message);
+    public function change_status(Request $request,$id){
+
+
+        $updated_data = $request->all();
+        $updated_data['update_id'] = $id;
+        
+        $rules = array(
+            'user_status' => 'required|in:Pending,InProgress,Approved,Rejected',
+        );
+       
+        $validator = \Validator::make($updated_data, $rules);
+
+        if ($validator->fails()) {
+            return $this->sendError($validator->errors()->first(), ["error" => $validator->errors()->first()]);
+        }
+
+        $user = $this->UserObj->saveUpdateUser($updated_data);
+        return $this->sendResponse($user, 'List of riders');
     }
     /**
      * Store a newly created resource in storage.

@@ -35,6 +35,8 @@ use App\Models\FavMenu;
 use App\Models\RiderCharge;
 use App\Models\PaymentCartInformation;
 use App\Models\GeneralSetting;
+use App\Models\RiderVehicleInformation;
+use App\Models\RiderAsset;
 
 
 
@@ -76,6 +78,8 @@ class Controller extends BaseController
     public $RiderChargeObj;
     public $PaymentCartInformationObj;
     public $GeneralSettingObj;
+    public $RiderVehicleInformationObj;
+    public $RiderAssetObj;
 
     public function __construct() {
         
@@ -105,6 +109,8 @@ class Controller extends BaseController
         $this->RiderChargeObj = new RiderCharge();
         $this->PaymentCartInformationObj = new PaymentCartInformation();
         $this->GeneralSettingObj = new GeneralSetting();
+        $this->RiderVehicleInformationObj = new RiderVehicleInformation();
+        $this->RiderAssetObj = new RiderAsset();
         
         
     }

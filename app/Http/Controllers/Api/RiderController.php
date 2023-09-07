@@ -44,21 +44,26 @@ class RiderController extends Controller
         $request_data = $request->all(); 
 
         $validator = \Validator::make($request_data, [
-            'user_id'    => 'required|exists:users,id',
             'company'    => 'required',
             'color'    => 'required',
             'model'    => 'required',
-            'vechicle_number'    => 'required',
-            'vechicle_condition'    => 'required|in:New,Normal,Rough',
-            'vechicle_type'    => 'required|in:Car,Bike',
+            'vehicle_number'    => 'required|unique:rider_vechicle_information,vehicle_number',
+            'vehicle_condition'    => 'required|in:New,Normal,Rough',
+            'vehicle_type'    => 'required|in:Car,Bike',
+            'image'    => 'required|image|mimes:jpeg,png,jpg|max:2048',
+            'asset_type'    => 'required|in:Vechicle,License,Other',
         ]);
    
         if($validator->fails()){
             return $this->sendError('Please fill all the required fields.', ["error"=>$validator->errors()->first()]);   
         }
+        $request_data['user_id'] = \Auth::user()->id;
+        $vehicle_data = $this->RiderVechicleInformationObj->saveUpdateRiderVechicleInformation($request_data);
 
-        $rider_charges = $this->RiderChargeObj->saveUpdateRiderCharge($request_data);
-        return $this->sendResponse($rider_charges, 'Rider charges added successfully.');
+        // if (condition) {
+        //     # code...
+        // }
+        return $this->sendResponse($vehicle_data, 'Rider charges added successfully.');
     }
 
     /**

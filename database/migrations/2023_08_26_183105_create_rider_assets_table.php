@@ -15,10 +15,10 @@ class CreateRiderAssetsTable extends Migration
     {
         Schema::create('rider_assets', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('vechicle_id')->nullable();
-            $table->foreign('vechicle_id')->references('id')->on('rider_vechicle_information')->onUpdate('cascade')->onDelete('cascade');
+            $table->unsignedBigInteger('vehicle_id')->nullable();
+            $table->foreign('vehicle_id')->references('id')->on('rider_vehicle_information')->onUpdate('cascade')->onDelete('cascade');
             $table->string('image')->nullable();
-            $table->enum('asset_type', ['Vechicle', 'License', 'Other'])->nullable();
+            $table->enum('asset_type', ['Vehicle', 'License', 'Other'])->nullable();
 
             $table->timestamps();
         });

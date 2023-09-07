@@ -16,8 +16,8 @@ class RiderAsset extends Model
         if (isset($posted_data['id'])) {
             $query = $query->where('rider_assets.id', $posted_data['id']);
         }
-        if (isset($posted_data['vechicle_id'])) {
-            $query = $query->where('rider_assets.vechicle_id', $posted_data['vechicle_id']);
+        if (isset($posted_data['vehicle_id'])) {
+            $query = $query->where('rider_assets.vehicle_id', $posted_data['vehicle_id']);
         }
         if (isset($posted_data['vechicle_image'])) {
             $query = $query->where('rider_assets.vechicle_image', $posted_data['vechicle_image']);
@@ -67,9 +67,8 @@ class RiderAsset extends Model
             $data = new RiderAsset;
         }
 
-
-        if (isset($posted_data['vechicle_id'])) {
-            $data->vechicle_id = $posted_data['vechicle_id'];
+        if (isset($posted_data['vehicle_id'])) {
+            $data->vehicle_id = $posted_data['vehicle_id'];
         }
         if (isset($posted_data['vechicle_image'])) {
             $data->vechicle_image = $posted_data['vechicle_image'];

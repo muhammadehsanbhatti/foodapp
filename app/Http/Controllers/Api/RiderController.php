@@ -41,7 +41,24 @@ class RiderController extends Controller
      */
     public function store(Request $request)
     {
-        //
+        $request_data = $request->all(); 
+
+        $validator = \Validator::make($request_data, [
+            'user_id'    => 'required|exists:users,id',
+            'company'    => 'required',
+            'color'    => 'required',
+            'model'    => 'required',
+            'vechicle_number'    => 'required',
+            'vechicle_condition'    => 'required|in:New,Normal,Rough',
+            'vechicle_type'    => 'required|in:Car,Bike',
+        ]);
+   
+        if($validator->fails()){
+            return $this->sendError('Please fill all the required fields.', ["error"=>$validator->errors()->first()]);   
+        }
+
+        $rider_charges = $this->RiderChargeObj->saveUpdateRiderCharge($request_data);
+        return $this->sendResponse($rider_charges, 'Rider charges added successfully.');
     }
 
     /**

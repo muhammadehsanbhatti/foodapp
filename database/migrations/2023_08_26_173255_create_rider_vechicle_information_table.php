@@ -22,7 +22,7 @@ class CreateRiderVechicleInformationTable extends Migration
             $table->string('model')->nullable();
             $table->string('vechicle_number')->nullable();
             $table->enum('vechicle_condition', ['New', 'Normal', 'Rough'])->nullable();
-            $table->enum('vechicle_type', ['Car', 'Bike', 'ApplePay', 'CashOnDelivery'])->nullable();
+            $table->enum('vechicle_type', ['Car', 'Bike'])->nullable();
             
             $table->timestamps();
         });

@@ -17,7 +17,7 @@ class CreateRiderAssetsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('vechicle_id')->nullable();
             $table->foreign('vechicle_id')->references('id')->on('rider_vechicle_information')->onUpdate('cascade')->onDelete('cascade');
-            $table->string('vechicle_image')->nullable();
+            $table->string('image')->nullable();
             $table->enum('asset_type', ['Vechicle', 'License', 'Other'])->nullable();
 
             $table->timestamps();

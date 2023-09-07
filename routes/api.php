@@ -98,26 +98,17 @@ Route::middleware('auth:api')->group( function () {
 	
 	//  Rider Charges
 	Route::resource('rider_charge', RiderChargesController::class);
-	Route::get('rider_earning',[RiderController::class, 'rider_earnings']);
+	
 	Route::get('rider_list', [UserController::class,'index']);
 	Route::post('change_rider_list/{id}', [UserController::class,'change_status']);
 	Route::post('rider_charge/{id}', [RiderChargesController::class, 'update']);
 
+	// Rider Vechicle Infomation
+	Route::get('rider_earning',[RiderController::class, 'rider_earnings']);
+	Route::resource('rider_vechicle', RiderController::class);
+
 	// GeneralSetting
 	Route::post('general_setting/{id}', [GeneralSettingController::class, 'update']);
 	Route::resource('general_setting', GeneralSettingController::class);
-
-	
-	// About
-	// Route::resource('about', AboutController::class);
-	// Route::post('about/{id}', [AboutController::class, 'update']);
-	
-	// // Privacy Policy
-	// Route::resource('privacy_policy', PrivacyPolicyController::class);
-	// Route::post('privacy_policy/{id}', [PrivacyPolicyController::class, 'update']);
-
-	// // Terms and Conditions
-	// Route::resource('terms_condition', TermsConditionController::class);
-	// Route::post('terms_condition/{id}',  [TermsConditionController::class, 'update']);
 
 });

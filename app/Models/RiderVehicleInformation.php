@@ -8,11 +8,16 @@ use Illuminate\Database\Eloquent\Model;
 class RiderVehicleInformation extends Model
 {
     use HasFactory;
-
+    public function riderVehicleAsset()
+    {
+        return $this->hasMany(RiderAsset::class, 'vehicle_id');
+    }
             
     public static function getRiderVehicleInformation($posted_data = array())
     {
-        $query = RiderVehicleInformation::latest();
+        $query = RiderVehicleInformation::latest()
+                    ->with('riderVehicleAsset')
+        ;
 
         if (isset($posted_data['id'])) {
             $query = $query->where('rider_vehicle_information.id', $posted_data['id']);

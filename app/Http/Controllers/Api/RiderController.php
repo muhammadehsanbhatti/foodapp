@@ -41,29 +41,49 @@ class RiderController extends Controller
      */
     public function store(Request $request)
     {
+        $posted_data = array();
         $request_data = $request->all(); 
 
         $validator = \Validator::make($request_data, [
             'company'    => 'required',
             'color'    => 'required',
             'model'    => 'required',
-            'vehicle_number'    => 'required|unique:rider_vechicle_information,vehicle_number',
+            'vehicle_number'    => 'required|unique:rider_vehicle_information,vehicle_number',
             'vehicle_condition'    => 'required|in:New,Normal,Rough',
             'vehicle_type'    => 'required|in:Car,Bike',
-            'image'    => 'required|image|mimes:jpeg,png,jpg|max:2048',
-            'asset_type'    => 'required|in:Vechicle,License,Other',
+            'licence_image'    => 'required|max:2048',
         ]);
    
         if($validator->fails()){
-            return $this->sendError('Please fill all the required fields.', ["error"=>$validator->errors()->first()]);   
+            return $this->sendError($validator->errors()->first(), ["error"=>$validator->errors()->first()]);   
         }
         $request_data['user_id'] = \Auth::user()->id;
-        $vehicle_data = $this->RiderVechicleInformationObj->saveUpdateRiderVechicleInformation($request_data);
+        $vehicle_data = $this->RiderVehicleInformationObj->saveUpdateRiderVehicleInformation($request_data);
+        if (isset($vehicle_data)) {
+            $posted_data['vehicle_id'] = $vehicle_data->id;
 
-        // if (condition) {
-        //     # code...
-        // }
-        return $this->sendResponse($vehicle_data, 'Rider charges added successfully.');
+            foreach ($request_data['licence_image'] as $key => $licence_image_file) {
+                if ($request->file('licence_image')) {
+                    $extension = $licence_image_file->getClientOriginalExtension();
+                    if ($extension == 'jpg' || $extension == 'jpeg' || $extension == 'png') {
+        
+                        $file_name = time() . '_' . rand(1000000, 9999999) . '.' . $extension;
+        
+                        $filePath = $licence_image_file->storeAs('vehicle_assets', $file_name, 'public');
+                        $posted_data['image'] = 'storage/vehicle_assets/' . $file_name;
+                        $posted_data['asset_type'] = 'Vehicle';
+                    } else {
+                        $error_message['error'] = 'Only allowled jpg, jpeg or png image format.';
+                        return $this->sendError($error_message['error'], $error_message);
+                    }
+                }
+                $data[] = $this->RiderAssetObj->saveUpdateRiderAsset($posted_data);
+            }
+            $vehicle_data = $this->RiderVehicleInformationObj->getRiderVehicleInformation([
+                'id'=>$vehicle_data->id
+            ]);
+        }     
+        return $this->sendResponse($vehicle_data, 'Vehicle information added successfully.');
     }
 
     /**

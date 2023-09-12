@@ -22,6 +22,15 @@ class PaymentController extends Controller
         return $this->sendResponse($data, 'Order histroy.');
 
     }
+    public function order_list(){
+        $get_restaurant_detail = $this->UserObj->getUser([
+            'detail' => true
+        ]);
+        $get_order_list = $this->PaymentHistroyObj->getPaymentHistroy([
+            'restaurant_id' => $get_restaurant_detail['busines']['id']
+        ]);
+        return $this->sendResponse($get_order_list, 'Order list.');
+    }
 
     public function processPayment(Request $request)
     {

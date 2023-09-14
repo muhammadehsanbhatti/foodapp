@@ -66,6 +66,7 @@ Route::middleware('auth:api')->group( function () {
 	Route::post('/order_pickup/{id}', [PaymentController::class, 'order_pickup']);
 	Route::get('/order_histroy', [PaymentController::class, 'index']);
 	Route::get('/order_list', [PaymentController::class, 'order_list']);
+	Route::post('/change_order_status/{id}', [PaymentController::class, 'change_order_status']);
 	Route::post('add_cart/{id}', [AddToCartController::class, 'update']);
 	Route::resource('add_cart', AddToCartController::class);
 

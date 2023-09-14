@@ -39,10 +39,35 @@ class PaymentController extends Controller
             return $this->sendError("error" , 'You can not access to check order list contact with admin');
         }
         return $this->sendResponse($get_order_list, 'Order list.');
-        // else{
-        //     return $this->sendResponse('message', 'No Order found');
-        // }
+    }
+    public function change_order_status(Request $request, $id)
+    {
        
+        $get_restaurant_detail = $this->UserObj->getUser([
+            'detail' => true,
+            'id' => \Auth::user()->id,
+        ]);
+        if (isset($get_restaurant_detail['busines']['id']) && $get_restaurant_detail->user_login_status == 'admin') {
+            $posted_data = array();
+            $requested_data = $request->all();
+            $requested_data['update_id'] = $id;
+    
+            $rules = array(
+                'id' => 'exists:payment_histroys,id',
+                'order_status' => 'required|in:Pending,Preparing,InProgress,Late,Rejected,Ready To Deliver,Delivered',
+            );
+            
+            $validator = \Validator::make($requested_data, $rules);
+    
+            if ($validator->fails()) {
+                return $this->sendError($validator->errors()->first(), ["error" => $validator->errors()->first()]);
+            }
+            $data = $this->PaymentHistroyObj->saveUpdatePaymentHistroy($requested_data);
+            return $this->sendResponse($data, 'Order status updated');
+        }
+        else{
+            return $this->sendError("error" , 'You can not access to change order statuts');
+        }
     }
 
     public function processPayment(Request $request)

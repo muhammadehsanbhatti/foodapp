@@ -8,11 +8,15 @@ use Illuminate\Database\Eloquent\Model;
 class FavMenu extends Model
 {
     use HasFactory;
+    public function restaurantMenue()
+    {
+        return $this->belongsTo(RestaurantMenue::class, 'restaurant_menue_id');
+    }
 
     public static function getFavMenu($posted_data = array())
     {
         $query = FavMenu::latest()
-        // ->with('restaurantMenueFile')
+                    ->with('restaurantMenue')
         ;
         if (isset($posted_data['id'])) {
             $query = $query->where('fav_menus.id', $posted_data['id']);

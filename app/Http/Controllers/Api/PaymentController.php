@@ -22,19 +22,26 @@ class PaymentController extends Controller
         return $this->sendResponse($data, 'Order histroy.');
 
     }
-    public function order_list(){
+    public function order_list(Request $request){
         $get_restaurant_detail = $this->UserObj->getUser([
-            'detail' => true
+            'detail' => true,
+            'id' => \Auth::user()->id,
         ]);
-        if ($get_restaurant_detail['busines']['id']) {
+        if ($get_restaurant_detail->user_login_status == 'super-admin') {
+                $get_order_list = $this->PaymentHistroyObj->getPaymentHistroy();
+        }
+        else if ($get_restaurant_detail['busines']['id'] && $get_restaurant_detail->user_login_status == 'admin') {
             $get_order_list = $this->PaymentHistroyObj->getPaymentHistroy([
                 'restaurant_id' => $get_restaurant_detail['busines']['id']
             ]);
-            return $this->sendResponse($get_order_list, 'Order list.');
         }
         else{
-            return $this->sendResponse('message', 'No Order found');
+            return $this->sendError("error" , 'You can not access to check order list contact with admin');
         }
+        return $this->sendResponse($get_order_list, 'Order list.');
+        // else{
+        //     return $this->sendResponse('message', 'No Order found');
+        // }
        
     }
 

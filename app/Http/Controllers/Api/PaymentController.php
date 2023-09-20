@@ -202,7 +202,7 @@ class PaymentController extends Controller
         $requested_data = array();
         $requested_data = $request->all();
         $rules = array(
-            'order_status'    => 'required',
+            'delivery_status'    => 'required',
         );
        
         $validator = \Validator::make($requested_data, $rules);
@@ -217,10 +217,10 @@ class PaymentController extends Controller
             'is_blocked' => 0
         ]);
         if ($check_user) {
-            $data = $this->PrivacyPolicyObj->saveUpdatePrivacyPolicy([
+            $data = $this->PaymentHistroyObj->saveUpdatePaymentHistroy([
                 'update_id' => $id,
                 'rider_id' => \Auth::user()->id,
-                'order_status' => $requested_data['order_status']
+                'delivery_status' => $requested_data['delivery_status']
             ]);
             return $this->sendResponse($data, 'Order status updated successfully.');
         }

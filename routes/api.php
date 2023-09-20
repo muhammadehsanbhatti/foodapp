@@ -76,10 +76,16 @@ Route::middleware('auth:api')->group( function () {
 	Route::post('restaurant/{id}', [RestaurantController::class, 'update']); 
 	Route::resource('restaurant', RestaurantController::class);
 	
+	// Schedule
+	Route::get('schedule', [RiderController::class, 'schedule']); 
+	Route::post('schedule_store', [RiderController::class, 'schedule_store']); 
+	Route::post('schedule_update/{id}', [RiderController::class, 'schedule_update']); 
+	Route::delete('destroy_schedule/{id}', [RiderController::class, 'destroy_schedule']); 
 	
 	// User Address
 	Route::post('user_address', [RegisterController::class, 'user_address']); 
 	Route::get('useraddress', [RegisterController::class, 'useraddress']); 
+	Route::get('get_profile', [RegisterController::class, 'get_profile']); 
 	Route::post('update_user_address/{id}', [RegisterController::class, 'update_user_address']); 
 	Route::delete('delete_user_address/{id}', [RegisterController::class, 'delete_user_address']); 
 	Route::post('editprofile', [RegisterController::class, 'edit_profile']);

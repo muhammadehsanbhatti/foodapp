@@ -14,11 +14,27 @@ class PaymentController extends Controller
      *
      * @return \Illuminate\Http\Response
      */
-    public function index()
+    public function index(Request $request)
     { 
-        $data = $this->PaymentHistroyObj->getPaymentHistroy([
-            'detail' =>true
+        $requested_data = array();
+        $requested_data = $request->all();
+        $requested_data['detail'] = true;
+        
+        $get_restaurant_detail = $this->UserObj->getUser([
+            'detail' => true,
+            'id' => \Auth::user()->id,
+            'user_login_status' => 'admin',
         ]);
+       
+        if (isset($get_restaurant_detail) && isset($get_restaurant_detail->busines->id)) {
+            $requested_data['restaurant_id'] = $get_restaurant_detail->busines->id;
+            unset($requested_data['detail']);
+        }
+        else{
+            $requested_data['user_id'] = \Auth::user()->id;
+        }
+        
+        $data = $this->PaymentHistroyObj->getPaymentHistroy($requested_data);
         return $this->sendResponse($data, 'Order histroy.');
 
     }

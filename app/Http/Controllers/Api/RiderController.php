@@ -130,4 +130,55 @@ class RiderController extends Controller
     {
         //
     }
+
+    // Schedule Apis
+    public function schedule()
+    {
+        $data = $this->ScheduleObj->getSchedule([
+            'user_id' => \Auth::user()->id,
+        ]);
+        return $this->sendResponse($data, 'User Schedules');
+    }
+
+    public function schedule_store(Request $request)
+    {
+        $posted_data = array();
+        $request_data = $request->all(); 
+
+        $validator = \Validator::make($request_data, [
+            'start_date' => 'required|date_format:Y-m-d h:i:s a|before_or_equal:end_date',
+            'end_date' => 'required|date_format:Y-m-d h:i:s a|after_or_equal:start_date',
+        ]);
+   
+        if($validator->fails()){
+            return $this->sendError($validator->errors()->first(), ["error"=>$validator->errors()->first()]);   
+        }
+        $request_data['user_id'] = \Auth::user()->id;
+        $data = $this->ScheduleObj->saveUpdateSchedule($request_data);
+        return $this->sendResponse($data, 'Schedules added successfully');
+    }
+
+    public function schedule_update(Request $request,$id)
+    {
+        $posted_data = array();
+        $request_data = $request->all(); 
+        $request_data['update_id'] = $id; 
+
+        $validator = \Validator::make($request_data, [
+            'start_date' => 'required|date_format:Y-m-d h:i:s a|before_or_equal:end_date',
+            'end_date' => 'required|date_format:Y-m-d h:i:s a|after_or_equal:start_date',
+        ]);
+   
+        if($validator->fails()){
+            return $this->sendError($validator->errors()->first(), ["error"=>$validator->errors()->first()]);   
+        }
+
+        $data = $this->ScheduleObj->saveUpdateSchedule($request_data);
+        return $this->sendResponse($data, 'Schedules updated successfully');
+    }
+    public function destroy_schedule($id)
+    {
+        $this->ScheduleObj->deleteSchedule($id);
+        return $this->sendResponse('Success', 'Schedules deleted successfully');
+    }
 }

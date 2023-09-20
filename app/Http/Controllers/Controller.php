@@ -37,6 +37,7 @@ use App\Models\PaymentCartInformation;
 use App\Models\GeneralSetting;
 use App\Models\RiderVehicleInformation;
 use App\Models\RiderAsset;
+use App\Models\Schedule;
 
 
 
@@ -80,6 +81,7 @@ class Controller extends BaseController
     public $GeneralSettingObj;
     public $RiderVehicleInformationObj;
     public $RiderAssetObj;
+    public $ScheduleObj;
 
     public function __construct() {
         
@@ -111,7 +113,7 @@ class Controller extends BaseController
         $this->GeneralSettingObj = new GeneralSetting();
         $this->RiderVehicleInformationObj = new RiderVehicleInformation();
         $this->RiderAssetObj = new RiderAsset();
-        
+        $this->ScheduleObj = new Schedule();
         
     }
 

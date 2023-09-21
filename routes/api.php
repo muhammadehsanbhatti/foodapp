@@ -59,6 +59,8 @@ Route::get('generalSetting', [GeneralSettingController::class, 'general_setting_
 
 Route::get('fav_menu', [FavMenuController::class, 'index']);
 
+Route::get('get_reviews', [UserReviewController::class, 'index']);
+
 
 Route::middleware('auth:api')->group( function () {
 

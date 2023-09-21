@@ -18,6 +18,7 @@ use App\Http\Controllers\Api\PaymentCardInformationController;
 use App\Http\Controllers\Api\GeneralSettingController;
 use App\Http\Controllers\Api\UserController;
 use App\Http\Controllers\Api\RiderController;
+use App\Http\Controllers\Api\UserReviewController;
 
 
 /*
@@ -99,6 +100,9 @@ Route::middleware('auth:api')->group( function () {
 	// Favourite Menu
 	Route::resource('fav_menu', FavMenuController::class);
 	Route::post('fav_menu/{id}', [FavMenuController::class, 'update']); 
+
+	// User Reviews
+	Route::resource('user_review', UserReviewController::class);
 
 	// Payment Card Information 
 	Route::resource('user_payment_cart_infomation', PaymentCardInformationController::class);

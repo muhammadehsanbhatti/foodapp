@@ -38,6 +38,7 @@ use App\Models\GeneralSetting;
 use App\Models\RiderVehicleInformation;
 use App\Models\RiderAsset;
 use App\Models\Schedule;
+use App\Models\UserReview;
 
 
 
@@ -82,6 +83,8 @@ class Controller extends BaseController
     public $RiderVehicleInformationObj;
     public $RiderAssetObj;
     public $ScheduleObj;
+    public $UserReviewObj;
+    
 
     public function __construct() {
         
@@ -114,6 +117,7 @@ class Controller extends BaseController
         $this->RiderVehicleInformationObj = new RiderVehicleInformation();
         $this->RiderAssetObj = new RiderAsset();
         $this->ScheduleObj = new Schedule();
+        $this->UserReviewObj = new UserReview();
         
     }
 

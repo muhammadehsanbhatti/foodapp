@@ -17,8 +17,8 @@ class CreateUserReviewsTable extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id')->nullable();
             $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
-            $table->unsignedBigInteger('restaurnat_menu_id');
-            $table->foreign('restaurnat_menu_id')->references('id')->on('restaurant_menues')->onUpdate('cascade')->onDelete('cascade');
+            $table->unsignedBigInteger('restaurant_id');
+            $table->foreign('restaurant_id')->references('id')->on('businesses')->onUpdate('cascade')->onDelete('cascade');
             $table->integer('stars')->nullable();
             $table->longText('message')->nullable();
             $table->timestamps();

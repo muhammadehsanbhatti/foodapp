@@ -19,8 +19,8 @@ class UserReview extends Model
         if (isset($posted_data['user_id'])) {
             $query = $query->where('user_reviews.user_id', $posted_data['user_id']);
         }
-        if (isset($posted_data['restaurnat_menu_id'])) {
-            $query = $query->where('user_reviews.restaurnat_menu_id', $posted_data['restaurnat_menu_id']);
+        if (isset($posted_data['restaurant_id'])) {
+            $query = $query->where('user_reviews.restaurant_id', $posted_data['restaurant_id']);
         }
         if (isset($posted_data['stars'])) {
             $query = $query->where('user_reviews.stars', $posted_data['stars']);
@@ -74,8 +74,8 @@ class UserReview extends Model
         if (isset($posted_data['user_id'])) {
             $data->user_id = $posted_data['user_id'];
         }
-        if (isset($posted_data['restaurnat_menu_id'])) {
-            $data->restaurnat_menu_id = $posted_data['restaurnat_menu_id'];
+        if (isset($posted_data['restaurant_id'])) {
+            $data->restaurant_id = $posted_data['restaurant_id'];
         }
         if (isset($posted_data['stars'])) {
             $data->stars = $posted_data['stars'];

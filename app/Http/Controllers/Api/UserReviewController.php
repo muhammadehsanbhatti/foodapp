@@ -17,13 +17,13 @@ class UserReviewController extends Controller
         $request_data = $request->all(); 
 
         $validator = \Validator::make($request_data, [
-            'restaurnat_menu_id' => 'exists:restaurant_menues,id',
+            'restaurant_id' => 'required|exists:businesses,id',
         ]);
    
         if($validator->fails()){
             return $this->sendError($validator->errors()->first(), ["error"=>$validator->errors()->first()]);   
         }
-        $request_data['restaurnat_menu_id'] = $request->restaurnat_menu_id;
+        $request_data['restaurant_id'] = $request->restaurant_id;
         $data = $this->UserReviewObj->getUserReview($request_data);
         return $this->sendResponse($data, 'User Reviews');
     }
@@ -49,7 +49,7 @@ class UserReviewController extends Controller
         $request_data = $request->all(); 
 
         $validator = \Validator::make($request_data, [
-            'restaurnat_menu_id' => 'exists:restaurant_menues,id',
+            'restaurant_id' => 'required|exists:businesses,id',
             'stars'    => 'required|min:1|max:5|integer',
             'message'    => 'required',
         ]);

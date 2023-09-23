@@ -61,6 +61,10 @@ class PaymentHistroy extends Model
         if (isset($posted_data['rider_id'])) {
             $query = $query->where('payment_histroys.rider_id', $posted_data['rider_id']);
         }
+        
+        if (isset($posted_data['rider_id_null'])) {
+            $query = $query->whereNull('payment_histroys.rider_id');
+        }
         if (isset($posted_data['payment_card_information_id'])) {
             $query = $query->where('payment_histroys.payment_card_information_id', $posted_data['payment_card_information_id']);
         }

@@ -18,20 +18,27 @@ class PaymentController extends Controller
     { 
         $requested_data = array();
         $requested_data = $request->all();
-        $requested_data['detail'] = true;
+        // $requested_data['detail'] = true;
         
         $get_restaurant_detail = $this->UserObj->getUser([
             'detail' => true,
             'id' => \Auth::user()->id,
-            'user_login_status' => 'admin',
+            // 'user_login_status' => 'admin',
         ]);
-       
-        if (isset($get_restaurant_detail) && isset($get_restaurant_detail->busines->id)) {
-            $requested_data['restaurant_id'] = $get_restaurant_detail->busines->id;
-            unset($requested_data['detail']);
+
+        if ($get_restaurant_detail->user_login_status == 'super-admin') {
+            $requested_data = $request->all();
+            // $get_order_list = $this->PaymentHistroyObj->getPaymentHistroy($requested_data);
         }
-        else{
+        if ($get_restaurant_detail->user_login_status == 'admin') {
+            $requested_data['restaurant_id'] = $get_restaurant_detail->busines->id;
+        }
+        if ($get_restaurant_detail->user_login_status == 'customer') {
             $requested_data['user_id'] = \Auth::user()->id;
+        }
+        
+        if ($get_restaurant_detail->user_login_status == 'rider') {
+            $requested_data['rider_id_null'] = true;
         }
         
         $data = $this->PaymentHistroyObj->getPaymentHistroy($requested_data);

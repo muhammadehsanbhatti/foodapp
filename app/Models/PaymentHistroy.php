@@ -61,7 +61,9 @@ class PaymentHistroy extends Model
         if (isset($posted_data['rider_id'])) {
             $query = $query->where('payment_histroys.rider_id', $posted_data['rider_id']);
         }
-        
+        if (isset($posted_data['order_completing_time'])) {
+            $query = $query->where('payment_histroys.order_completing_time', $posted_data['order_completing_time']);
+        }
         if (isset($posted_data['rider_id_null'])) {
             $query = $query->whereNull('payment_histroys.rider_id');
         }
@@ -153,6 +155,9 @@ class PaymentHistroy extends Model
         }
         if (isset($posted_data['rider_id'])) {
             $data->rider_id = $posted_data['rider_id'];
+        }
+        if (isset($posted_data['order_completing_time'])) {
+            $data->order_completing_time = $posted_data['order_completing_time'];
         }
         if (isset($posted_data['customer_name'])) {
             $data->customer_name = $posted_data['customer_name'];

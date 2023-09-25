@@ -77,6 +77,7 @@ class PaymentController extends Controller
     
             $rules = array(
                 'id' => 'exists:payment_histroys,id',
+                'order_completing_time' => 'required|integer',
                 'order_status' => 'required|in:Pending,Preparing,InProgress,Late,Rejected,Ready To Deliver,Delivered',
             );
             

@@ -30,6 +30,7 @@ class CreatePaymentHistroysTable extends Migration
             $table->string('currency')->nullable();
             $table->integer('item_delivered_quantity')->nullable();
             $table->integer('rider_charges')->nullable();
+            $table->integer('order_completing_time')->nullable();
             $table->enum('payment_status', ['Stripe', 'Paypal', 'ApplePay', 'CashOnDelivery'])->nullable();
             $table->enum('order_status', ['Pending','Preparing', 'InProgress','Late','Rejected','Ready To Deliver','Delivered'])->default('Pending');
             $table->enum('delivery_status', ['Accept', 'Pending', 'Preparing', 'OnWay', 'Delivered'])->default('Pending');

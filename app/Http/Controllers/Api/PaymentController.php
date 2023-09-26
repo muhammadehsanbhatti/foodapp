@@ -38,6 +38,7 @@ class PaymentController extends Controller
         }
         
         if ($get_restaurant_detail->user_login_status == 'rider') {
+            $requested_data['delivery_status_not'] = "Customer Own Order Pickup";
             $requested_data['rider_id_null'] = true;
         }
         
@@ -101,9 +102,12 @@ class PaymentController extends Controller
             $posted_data = array();
             $requested_data = $request->all();
             
+
             $rules = array(
                 'user_id' => 'exists:add_to_carts,user_id',
-                'address_id' => 'required|exists:user_addresses,id',
+                'address_id' => 'required_unless:delivery_status,Customer Own Order Pickup',
+                'exists:user_addresses,id',
+                // 'address_id' => 'required|exists:user_addresses,id',
                 'payment_cart_information_id' => 'required|exists:payment_cart_information,id',
                 'restaurant_id' => 'required|exists:restaurant_menues,restaurant_id',
             );
@@ -200,7 +204,7 @@ class PaymentController extends Controller
                     $posted_data['payment_status'] = $get_user_cart_information->payment_status;
                     $posted_data['rider_charges'] = 50;
                     $posted_data['order_status'] = 'Pending';
-                    $posted_data['delivery_status'] = 'Pending';
+                    $posted_data['delivery_status'] = isset($request->delivery_status) && $request->delivery_status == 'Customer Own Order Pickup' ? $request->delivery_status:'Pending';
                     $data = $this->PaymentHistroyObj->saveUpdatePaymentHistroy($posted_data);
                     if ($data) {
                         $this->AddToCartObj->deleteAddToCart(0,['user_id' => \Auth::user()->id]);

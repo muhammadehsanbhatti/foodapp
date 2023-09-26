@@ -100,6 +100,9 @@ class PaymentHistroy extends Model
         if (isset($posted_data['delivery_status'])) {
             $query = $query->where('payment_histroys.delivery_status', $posted_data['delivery_status']);
         }
+        if (isset($posted_data['delivery_status_not'])) {
+            $query = $query->where('payment_histroys.delivery_status', '!=', $posted_data['delivery_status_not']);
+        }
         $query->select('payment_histroys.*');
         
         $query->getQuery()->orders = null;

@@ -17,7 +17,7 @@ class CreatePaymentHistroysTable extends Migration
             $table->id();
             $table->unsignedBigInteger('user_id');
             $table->foreign('user_id')->references('id')->on('users')->onUpdate('cascade')->onDelete('cascade');
-             $table->unsignedBigInteger('payment_card_information_id');
+             $table->unsignedBigInteger('payment_card_information_id')->nullable();
             $table->foreign('payment_card_information_id')->references('id')->on('payment_cart_information')->onUpdate('cascade')->onDelete('cascade');
             $table->unsignedBigInteger('restaurant_id');
             $table->foreign('restaurant_id')->references('id')->on('businesses')->onUpdate('cascade')->onDelete('cascade');

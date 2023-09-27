@@ -108,7 +108,9 @@ class PaymentController extends Controller
                 'address_id' => 'required_unless:delivery_status,Customer Own Order Pickup',
                 'exists:user_addresses,id',
                 // 'address_id' => 'required|exists:user_addresses,id',
-                'payment_cart_information_id' => 'required|exists:payment_cart_information,id',
+                'payment_cart_information_id' => 'required_without_all:payment_status,CashOnDelivery,delivery_status,Customer Own Order Pickup',
+                'exists:payment_cart_information,id',
+                // 'payment_cart_information_id' => 'required|exists:payment_cart_information,id',
                 'restaurant_id' => 'required|exists:restaurant_menues,restaurant_id',
             );
            
@@ -170,50 +172,61 @@ class PaymentController extends Controller
                     'detail' => true
                 ]);
 
-                if ($get_user_cart_information) {
-                $stripe = new \Stripe\StripeClient(
-                env('STRIPE_SECRET')
-                );
+                $payment_histroy_data = array();
+                $payment_histroy_data['user_id'] = \Auth::user()->id;
+                $payment_histroy_data['user_address_id'] = $get_user_address->id;
+                $payment_histroy_data['restaurant_id'] = $request->restaurant_id;
+                $payment_histroy_data['item_delivered_quantity'] = $total_quantity;
+                $payment_histroy_data['rider_charges'] = 50;
+                $payment_histroy_data['order_status'] = 'Pending';
+                $payment_histroy_data['delivery_status'] = isset($request->delivery_status) && $request->delivery_status == 'Customer Own Order Pickup' ? $request->delivery_status:'Pending';
+
+                if ($get_user_cart_information && !isset($request->payment_status) && isset($request->delivery_status) && $request->delivery_status == 'Customer Own Order Pickup') {
+                    $stripe = new \Stripe\StripeClient(
+                        env('STRIPE_SECRET')
+                    );
+                        
+                    $res = $stripe->tokens->create([
+                        'card' => [
+                        'number' => $get_user_cart_information->card_number,
+                        'exp_month' =>  $get_user_cart_information->exp_month,
+                        'exp_year' => $get_user_cart_information->exp_year,
+                        'cvc' => $get_user_cart_information->cvc,
+                        ],
+                    ]);
+                    Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
+            
+                    $response = $stripe->charges->create([
+                        'amount' =>  ($total_price * $total_quantity) + $get_rider_service_charges->per_killometer_price ,
+                        'currency' => $request->currency,
+                        'source' => $res->id,
+                        'description' => $request->description,
+                    ]);
                     
-                $res = $stripe->tokens->create([
-                'card' => [
-                'number' => $get_user_cart_information->card_number,
-                'exp_month' =>  $get_user_cart_information->exp_month,
-                'exp_year' => $get_user_cart_information->exp_year,
-                'cvc' => $get_user_cart_information->cvc,
-                ],
-                ]);
-                Stripe\Stripe::setApiKey(env('STRIPE_SECRET'));
-        
-                $response = $stripe->charges->create([
-                'amount' =>  ($total_price * $total_quantity) + $get_rider_service_charges->per_killometer_price ,
-                'currency' => $request->currency,
-                'source' => $res->id,
-                'description' => $request->description,
-                ]);
-                    
-                    $posted_data = array();
-                    $posted_data['user_id'] = \Auth::user()->id;
-                    $posted_data['user_address_id'] = $get_user_address->id;
-                    $posted_data['payment_card_information_id'] = $get_user_cart_information->id;
-                    $posted_data['restaurant_id'] = $request->restaurant_id;
-                    $posted_data['customer_name'] = $get_user_cart_information->card_holder_name;
-                    $posted_data['currency'] = $request->currency;
-                    $posted_data['amount_captured'] = $total_price * $total_quantity;
-                    $posted_data['item_delivered_quantity'] = $total_quantity;
-                    $posted_data['payment_status'] = $get_user_cart_information->payment_status;
-                    $posted_data['rider_charges'] = 50;
-                    $posted_data['order_status'] = 'Pending';
-                    $posted_data['delivery_status'] = isset($request->delivery_status) && $request->delivery_status == 'Customer Own Order Pickup' ? $request->delivery_status:'Pending';
-                    $data = $this->PaymentHistroyObj->saveUpdatePaymentHistroy($posted_data);
-                    if ($data) {
-                        $this->AddToCartObj->deleteAddToCart(0,['user_id' => \Auth::user()->id]);
-                    }
-                    return $this->sendResponse($response->status, 'Thansk, Your transaction completed successfully.');
+                    $payment_histroy_data['payment_card_information_id'] = $get_user_cart_information->id;
+                    $payment_histroy_data['customer_name'] = $get_user_cart_information->card_holder_name;
+                    $payment_histroy_data['currency'] = $request->currency;
+                    $payment_histroy_data['amount_captured'] = $total_price * $total_quantity;
+                    $payment_histroy_data['payment_status'] = isset($request->delivery_status) && ($request->delivery_status == 'Customer Own Order Pickup') ? NULL : $get_user_cart_information->payment_status;
+                }
+                else if (isset($request->payment_status) && !isset($request->payment_cart_information_id)) {
+                    $payment_histroy_data['customer_name'] = \Auth::user()->first_name;
+                    $payment_histroy_data['payment_status'] = $request->payment_status;
+                }
+                else if (!isset($request->payment_cart_information_id) && $request->delivery_status == 'Customer Own Order Pickup') {
+                    $payment_histroy_data['customer_name'] = \Auth::user()->first_name;
+                    $payment_histroy_data['payment_status'] = NULL;
                 }
                 else{
                     return $this->sendError("eror", "Invalid cart information");
                 } 
+
+                $data = $this->PaymentHistroyObj->saveUpdatePaymentHistroy($payment_histroy_data);
+
+                if ($data) {
+                    $this->AddToCartObj->deleteAddToCart(0,['user_id' => \Auth::user()->id]);
+                    return $this->sendResponse(isset($response->status) ?$response->status:'Success', 'Thansk, Your order completed successfully.');
+                }
             }
             else{
                 return $this->sendError("eror", "First you add address");

@@ -24,7 +24,6 @@ class Kernel extends ConsoleKernel
         $schedule->command('email:cron')->everyMinute();
         $schedule->command('tokens:cron')->everyMinute();
         $schedule->command('backup:cron')->daily();
-        $schedule->command('assigntask:cron')->everyMinute();
         
         // $schedule->command('backup:cron')->everyMinute();
         // $schedule->command('db:backup')->daily();

@@ -43,10 +43,9 @@ class EmailCron extends Command
      */
     public function handle()
     {
-
-        $email_logs_rec = EmailLogs::getEmailLogs([
-            'email_status' => 1,
-            'paginate' => 200
+        $EmailLogObj = new EmailLogs();
+        $email_logs_rec = $EmailLogObj->getEmailLogs([
+            'email_status' => 'Pending'
         ]);
      
         foreach ($email_logs_rec as $email_rec) {
@@ -57,85 +56,51 @@ class EmailCron extends Command
                 'body' => $email_rec->email_message
             ];
 
-            Mail::send('emails.email_template', $data, function ($message) use ($data) {
+            \Log::info("Great! Email cron job is working fine!");
+            if(Mail::send('emails.email_template', $data, function ($message) use ($data) {
                 $message->to($data['email'])
                     ->subject($data['subject']);
-            });
-
-            if (Mail::failures()) {
-                // return response()->Fail('Sorry! Please try again latter');
-            }else{
+            })){
+                \Log::info("Success! Email send successfully to ".$data['email']);
                 // return response()->success('Great! Successfully send in your mail');
-                EmailLogs::saveUpdateEmailLogs([
+                $EmailLogObj->saveUpdateEmailLogs([
                     'update_id' => $email_rec->id,
                     'send_at' => Carbon::now()->toDateTimeString(),
-                    'email_status' => 2,
+                    'email_status' => 'Send',
+                ]);
+
+            }else{
+                \Log::info("Sorry! Email not sended to ".$data['email']);
+                // return response()->Fail('Sorry! Please try again latter');
+                $EmailLogObj->saveUpdateEmailLogs([
+                    'update_id' => $email_rec->id,
+                    'stop_at' => Carbon::now()->toDateTimeString(),
+                    'email_status' => 'Stop',
                 ]);
             }
 
-            
-        }
-        $installation_datetime = Carbon::now()->toDateTimeString();
-        $installation_datetime = date('Y-m-d H:i:s', strtotime("-6 months", strtotime($installation_datetime)));
-        
+            // \Log::info("Great! Email cron job is working fine!");
 
-        $order_recs = Order::getOrders([
-            'installation_datetime' => $installation_datetime,
-            'not_send_email_after' => 6,
-            'paginate' => 200
-        ]);
-        // echo '<pre>';print_r($order_recs);echo '</pre>';exit;
-        
-        foreach ($order_recs as $order_rec) {
-            $decodeShortCodesTemplate = decodeShortCodesTemplate([
-                'message_id' => 13,
-                'order_id' => $order_rec->id,
-            ]);
-            
-            EmailLogs::saveUpdateEmailLogs([
-                'user_id' => $order_rec->receiverUser->id,
-                'email' => $order_rec->receiverUser->email,
-                'email_subject' => $decodeShortCodesTemplate['email_subject'],
-                'email_message' => $decodeShortCodesTemplate['email_body'],
-                'email_status' => 1,
-                'send_email_after' => 2,
-            ]);
-            
-            Order::saveUpdateOrder([
-                'update_id' => $order_rec->id,
-                'send_email_after' => '6 Month'
-            ]);
+            // if( count(Mail::failures()) > 0 ) {
+            //     foreach(Mail::failures() as $email_address) {
+            //         \Log::info("Sorry! Email not sended to ".$email_address);
+            //         // return response()->Fail('Sorry! Please try again latter');
+            //         $EmailLogObj->saveUpdateEmailLogs([
+            //             'update_id' => $email_rec->id,
+            //             'stop_at' => Carbon::now()->toDateTimeString(),
+            //             'email_status' => 'Stop',
+            //         ]);
+            //     }
+            // }else{
+            //     \Log::info("Success! Email send successfully to ".$data['email']);
+            //     // return response()->success('Great! Successfully send in your mail');
+            //     $EmailLogObj->saveUpdateEmailLogs([
+            //         'update_id' => $email_rec->id,
+            //         'send_at' => Carbon::now()->toDateTimeString(),
+            //         'email_status' => 'Send',
+            //     ]);
+            // }
         }
-
-        // rectification email
-        $rectification_period_datetime = date('Y-m-d H:i:s', strtotime("-2 weeks", strtotime($installation_datetime)));
-        $order_rectification_record = Order::getOrders([
-            'rectification_period_date' => $rectification_period_datetime,
-            'not_send_email_after' => 2,
-        ]);
-       
-        foreach ($order_rectification_record as $order_rec) {
-            $decodeShortCodesTemplate = decodeShortCodesTemplate([
-                'message_id' => 17,
-                'order_id' => $order_rec->id,
-            ]);
-            
-            EmailLogs::saveUpdateEmailLogs([
-                'user_id' => $order_rec->receiverUser->id,
-                'email' => $order_rec->receiverUser->email,
-                'email_subject' => $decodeShortCodesTemplate['email_subject'],
-                'email_message' => $decodeShortCodesTemplate['email_body'],
-                'email_status' => 1,
-                'send_email_after' => 3,
-            ]);
-            Order::saveUpdateOrder([
-                'update_id' => $order_rec->id,
-                'send_email_after' => '6 Weeks'
-            ]);
-            
-        }
-    
-        \Log::info("Email cron is working fine!");
 
     }
 }

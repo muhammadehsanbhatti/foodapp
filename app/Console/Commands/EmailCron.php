@@ -39,6 +39,7 @@ class EmailCron extends Command
     /**
      * Execute the console command.
      *
+     *
      * @return int
      */
     public function handle()
@@ -47,7 +48,7 @@ class EmailCron extends Command
         $email_logs_rec = $EmailLogObj->getEmailLogs([
             'email_status' => 'Pending'
         ]);
-     
+
         foreach ($email_logs_rec as $email_rec) {
 
             $data = [
